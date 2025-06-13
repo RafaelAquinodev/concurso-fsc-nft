@@ -1,4 +1,4 @@
-import { PageContainer } from "@/app/(protected)/dashboard/page-container";
+import { PageContainer } from "@/app/(protected)/_components/page-container";
 
 const DashboardPage = () => {
   return (
