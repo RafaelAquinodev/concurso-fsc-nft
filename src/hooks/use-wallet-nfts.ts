@@ -37,6 +37,7 @@ export interface NFT {
   normalized_metadata?: {
     image?: string;
   };
+  resolvedImageUrl?: string;
 }
 
 export interface NFTResponse {
@@ -47,6 +48,9 @@ export interface NFTResponse {
   result: NFT[];
 }
 
+type SortKey = "name" | "floor_price";
+type SortOrder = "asc" | "desc";
+
 interface UseWalletNFTsProps {
   address: string;
   chain?: string;
@@ -56,6 +60,8 @@ interface UseWalletNFTsProps {
   mediaItems?: boolean;
   includePrices?: boolean;
   excludeSpam?: boolean;
+  sortBy?: SortKey;
+  sortOrder?: SortOrder;
 }
 
 interface UseWalletNFTsReturn {
@@ -78,12 +84,37 @@ export const useWalletNFTs = ({
   mediaItems = false,
   includePrices = true,
   excludeSpam = true,
+  sortBy = "floor_price",
+  sortOrder = "asc",
 }: UseWalletNFTsProps): UseWalletNFTsReturn => {
   const [nfts, setNfts] = useState<NFT[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState(0);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
+
+  const sortNFTs = (nfts: NFT[], key: SortKey, order: SortOrder) => {
+    return [...nfts].sort((a, b) => {
+      const valA = a[key] ?? "";
+      const valB = b[key] ?? "";
+
+      if (!isNaN(Number(valA)) && !isNaN(Number(valB))) {
+        return order === "asc"
+          ? Number(valA) - Number(valB)
+          : Number(valB) - Number(valA);
+      }
+
+      return order === "asc"
+        ? String(valA).localeCompare(String(valB))
+        : String(valB).localeCompare(String(valA));
+    });
+  };
+
+  const hasPrice = (nft: NFT): boolean => {
+    const floorPrice = nft.floor_price || nft.list_price?.price;
+
+    return Boolean(floorPrice && floorPrice.trim());
+  };
 
   const fetchNFTs = async (loadMore = false, customCursor?: string) => {
     if (!address || !address.trim()) {
@@ -131,10 +162,17 @@ export const useWalletNFTs = ({
 
       console.log("Dados recebidos:", data);
 
+      const filteredResults = data.result.filter(hasPrice);
+      const sortedResults = sortNFTs(filteredResults, sortBy, sortOrder);
+
+      console.log("Resultados filtrados e ordenados:", sortedResults);
+
       if (loadMore) {
-        setNfts((prev) => [...prev, ...data.result]);
+        setNfts((prev) =>
+          sortNFTs([...prev, ...sortedResults], sortBy, sortOrder),
+        );
       } else {
-        setNfts(data.result);
+        setNfts(sortedResults);
       }
 
       setTotalCount(data.total);
