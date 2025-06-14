@@ -50,7 +50,7 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar className="bg-sidebar h-screen border-r" collapsible="none">
+    <Sidebar className="bg-sidebar border-r h-screen fixed" collapsible="none">
       <SidebarHeader className="flex justify-center p-4">
         <Image src="/logo.svg" alt="FSC" width={40} height={40} />
       </SidebarHeader>
