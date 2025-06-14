@@ -37,7 +37,7 @@ export interface NFT {
   normalized_metadata?: {
     image?: string;
   };
-  resolvedImageUrl?: string;
+  resolvedImageUrl?: string | null;
 }
 
 export interface NFTResponse {
@@ -116,6 +116,17 @@ export const useWalletNFTs = ({
     return Boolean(floorPrice && floorPrice.trim());
   };
 
+  const resolveImageUrl = (nft: NFT): string | null => {
+    const rawImage = nft.normalized_metadata?.image;
+    if (!rawImage) return null;
+
+    if (rawImage.startsWith("ipfs://")) {
+      return rawImage.replace("ipfs://", "https://ipfs.io/ipfs/");
+    }
+
+    return rawImage;
+  };
+
   const fetchNFTs = async (loadMore = false, customCursor?: string) => {
     if (!address || !address.trim()) {
       setError("Endereço da wallet é obrigatório");
@@ -165,14 +176,19 @@ export const useWalletNFTs = ({
       const filteredResults = data.result.filter(hasPrice);
       const sortedResults = sortNFTs(filteredResults, sortBy, sortOrder);
 
+      const enhancedResults = sortedResults.map((nft) => ({
+        ...nft,
+        resolvedImageUrl: resolveImageUrl(nft),
+      }));
+
       console.log("Resultados filtrados e ordenados:", sortedResults);
 
       if (loadMore) {
         setNfts((prev) =>
-          sortNFTs([...prev, ...sortedResults], sortBy, sortOrder),
+          sortNFTs([...prev, ...enhancedResults], sortBy, sortOrder),
         );
       } else {
-        setNfts(sortedResults);
+        setNfts(enhancedResults);
       }
 
       setTotalCount(data.total);
