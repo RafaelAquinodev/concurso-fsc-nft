@@ -1,20 +1,15 @@
-import { PageContainer } from "../_components/page-container"
-import NftCard from "./_components/NftCard"
+import { PageContainer } from "../_components/page-container";
 
 const nftsPage = () => {
   return (
     <PageContainer>
-      <div className=" flex flex-wrap gap-8">
-        <NftCard />
-        <NftCard />
-        <NftCard />
-        <NftCard />
-        <NftCard />
-        <NftCard />
-        <NftCard />
+      <div className="h-[2000px]">
+        {" "}
+        {/* pra ficar a cor roxa de fundo, tirar apos desenvolvimento*/}
+        <h1>nfts</h1>
       </div>
     </PageContainer>
-  )
-}
+  );
+};
 
-export default nftsPage
+export default nftsPage;
