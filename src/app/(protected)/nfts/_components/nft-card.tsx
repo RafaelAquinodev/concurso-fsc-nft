@@ -1,10 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
 "use client";
 
-import { Skeleton } from "@/components/ui/skeleton";
 import { NFT } from "@/types/nfts-types";
 import { Heart } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
 
 const NftCard: React.FC<{ nft: NFT }> = ({ nft }) => {
@@ -12,9 +10,9 @@ const NftCard: React.FC<{ nft: NFT }> = ({ nft }) => {
   const [imageLoading, setImageLoading] = useState(true);
 
   return (
-    <div className="overflow-hidden rounded-xl bg-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl">
+    <div className="overflow-hidden rounded-xl bg-black shadow-[0_5px_0_0_#b22ecd] transition-all duration-300 hover:scale-102 hover:shadow-xl">
       {/* Imagem do NFT */}
-      <div className="relative h-64 bg-gradient-to-br from-purple-100 to-blue-100">
+      <div className="relative h-64 bg-black">
         {nft.resolvedImageUrl && !imageError ? (
           <>
             {imageLoading && (
@@ -25,7 +23,7 @@ const NftCard: React.FC<{ nft: NFT }> = ({ nft }) => {
             <img
               src={nft.resolvedImageUrl}
               alt={nft.metadata?.name || `NFT ${nft.token_id}`}
-              className={`h-full w-full object-cover transition-opacity duration-300 ${
+              className={`h-full w-full rounded-xl object-cover transition-opacity duration-300 ${
                 imageLoading ? "opacity-0" : "opacity-100"
               }`}
               onLoad={() => setImageLoading(false)}
@@ -36,6 +34,7 @@ const NftCard: React.FC<{ nft: NFT }> = ({ nft }) => {
             />
           </>
         ) : (
+          // Se a imagem não carregar, mostra svg
           <div className="flex h-full w-full items-center justify-center">
             <div className="text-center text-gray-500">
               <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-lg bg-gray-200">
@@ -59,20 +58,17 @@ const NftCard: React.FC<{ nft: NFT }> = ({ nft }) => {
 
       {/* Informações do NFT */}
       <div className="p-4">
-        <div className="mb-2">
-          <h3 className="truncate text-lg font-bold text-gray-800">
+        <div className="mb-2 flex">
+          <h3 className="truncate text-lg font-bold text-gray-100">
             {nft.metadata?.name || nft.name || `Token #${nft.token_id}`}
           </h3>
-          <p className="text-sm text-gray-600">{nft.symbol}</p>
+          <div className="ml-auto flex items-center">
+            <Heart className="h-5 w-5 cursor-pointer text-red-500 transition-colors hover:text-red-600" />
+          </div>
         </div>
+        <p className="text-sm text-gray-50">{nft.symbol}</p>
 
-        {nft.metadata?.description && (
-          <p className="mb-3 line-clamp-2 text-sm text-gray-700">
-            {nft.metadata.description}
-          </p>
-        )}
-
-        <div className="space-y-2 text-xs text-gray-500">
+        <div className="space-y-2 text-xs text-gray-50">
           <div className="flex justify-between">
             <span>Token ID:</span>
             <span className="font-mono">#{nft.token_id}</span>
