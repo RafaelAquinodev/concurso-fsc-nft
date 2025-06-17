@@ -104,8 +104,6 @@ export const useWalletNFTs = ({
 
       const data: NFTResponse = await response.json();
 
-      console.log("Dados recebidos:", data);
-
       const filteredResults = data.result.filter(hasPrice);
       const sortedResults = sortNFTs(filteredResults, sortBy, sortOrder);
 
@@ -114,7 +112,7 @@ export const useWalletNFTs = ({
         resolvedImageUrl: resolveImageUrl(nft),
       }));
 
-      console.log("Resultados filtrados e ordenados:", sortedResults);
+      console.log("Resultados enhanced:", enhancedResults);
 
       if (loadMore) {
         setNfts((prev) =>

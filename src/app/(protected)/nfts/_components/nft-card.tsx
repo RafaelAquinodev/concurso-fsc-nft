@@ -1,28 +1,117 @@
+/* eslint-disable @next/next/no-img-element */
+"use client";
+
 import { Skeleton } from "@/components/ui/skeleton";
+import { NFT } from "@/types/nfts-types";
 import { Heart } from "lucide-react";
 import Image from "next/image";
+import { useState } from "react";
 
-const NftCard = () => {
+const NftCard: React.FC<{ nft: NFT }> = ({ nft }) => {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+
   return (
-    <div
-      className="h-[280px] w-[200px] rounded-md bg-black"
-      style={{ boxShadow: "0px 5px 0px 0px #b22ecd" }}
-    >
-      <Skeleton className="h-[190px] w-full" />{" "}
-      {/* No lugar do skeleton só colocar o component Image (manter as classes)*/}
-      <div className="flex h-[90px] flex-col justify-between p-3">
-        <div className="flex justify-between">
-          <span className="font-semibold">Crippled world</span>
-          <Heart size={16} className="text-primary" />
+    <div className="overflow-hidden rounded-xl bg-white shadow-lg transition-all duration-300 hover:scale-105 hover:shadow-xl">
+      {/* Imagem do NFT */}
+      <div className="relative h-64 bg-gradient-to-br from-purple-100 to-blue-100">
+        {nft.resolvedImageUrl && !imageError ? (
+          <>
+            {imageLoading && (
+              <div className="absolute inset-0 flex items-center justify-center">
+                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-purple-600"></div>
+              </div>
+            )}
+            <img
+              src={nft.resolvedImageUrl}
+              alt={nft.metadata?.name || `NFT ${nft.token_id}`}
+              className={`h-full w-full object-cover transition-opacity duration-300 ${
+                imageLoading ? "opacity-0" : "opacity-100"
+              }`}
+              onLoad={() => setImageLoading(false)}
+              onError={() => {
+                setImageError(true);
+                setImageLoading(false);
+              }}
+            />
+          </>
+        ) : (
+          <div className="flex h-full w-full items-center justify-center">
+            <div className="text-center text-gray-500">
+              <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-lg bg-gray-200">
+                <svg
+                  className="h-8 w-8"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <p className="text-sm">Sem imagem</p>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Informações do NFT */}
+      <div className="p-4">
+        <div className="mb-2">
+          <h3 className="truncate text-lg font-bold text-gray-800">
+            {nft.metadata?.name || nft.name || `Token #${nft.token_id}`}
+          </h3>
+          <p className="text-sm text-gray-600">{nft.symbol}</p>
         </div>
 
-        <div className="flex justify-between">
-          <p className="text-chart-1 text-xs">Para venda</p>
-          <div className="flex items-center">
-            <Image src="/ether.svg" alt="etherIcon" width={20} height={20} />
-            <span className="text-muted-foreground text-sm">0.98</span>
+        {nft.metadata?.description && (
+          <p className="mb-3 line-clamp-2 text-sm text-gray-700">
+            {nft.metadata.description}
+          </p>
+        )}
+
+        <div className="space-y-2 text-xs text-gray-500">
+          <div className="flex justify-between">
+            <span>Token ID:</span>
+            <span className="font-mono">#{nft.token_id}</span>
+          </div>
+          <div className="flex justify-between">
+            <span>Contrato:</span>
+            <span className="ml-2 truncate font-mono">
+              {nft.token_address.slice(0, 6)}...{nft.token_address.slice(-4)}
+            </span>
+          </div>
+          <div className="flex justify-between">
+            <span>Tipo:</span>
+            <span className="font-semibold">{nft.contract_type}</span>
           </div>
         </div>
+
+        {/* Atributos */}
+        {nft.metadata?.attributes && nft.metadata.attributes.length > 0 && (
+          <div className="mt-3 border-t border-gray-100 pt-3">
+            <h4 className="mb-2 text-xs font-semibold text-gray-600">
+              Atributos:
+            </h4>
+            <div className="flex flex-wrap gap-1">
+              {nft.metadata.attributes.slice(0, 3).map((attr, index) => (
+                <span
+                  key={index}
+                  className="rounded-full bg-purple-100 px-2 py-1 text-xs text-purple-800"
+                >
+                  {attr.trait_type}: {attr.value}
+                </span>
+              ))}
+              {nft.metadata.attributes.length > 3 && (
+                <span className="rounded-full bg-gray-100 px-2 py-1 text-xs text-gray-600">
+                  +{nft.metadata.attributes.length - 3} mais
+                </span>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
