@@ -8,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { UserButton } from "@clerk/nextjs";
 import { Bell } from "lucide-react";
 
 const Header = () => {
@@ -30,8 +31,9 @@ const Header = () => {
       </Select>
       <div className="flex items-center gap-5">
         <Bell strokeWidth={1.5} width={18} />
+        {/* <Avatar className="items center flex h-full justify-center"> */}
         <Avatar>
-          <AvatarFallback>FSC</AvatarFallback>
+          <UserButton />
         </Avatar>
       </div>
     </header>
