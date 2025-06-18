@@ -1,9 +1,25 @@
+"use client";
+import { useUser } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 import { SidebarProvider } from "@/components/ui/sidebar";
-
 import { AppSidebar } from "./_components/app-sidebar";
 import Header from "./_components/header";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
+  const { isSignedIn, isLoaded } = useUser();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoaded && !isSignedIn) {
+      router.replace("/");
+    }
+  }, [isLoaded, isSignedIn, router]);
+
+  if (!isLoaded || !isSignedIn) {
+    return null;
+  }
+
   return (
     <SidebarProvider open={true} className="overflow-hidden">
       <AppSidebar />
@@ -18,7 +34,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
 function HeaderWrapper() {
   return (
-    <div className="fixed top-0 left-[255px] right-0 z-40 bg-background border-l">
+    <div className="bg-background fixed top-0 right-0 left-[255px] z-40 border-l">
       <Header />
     </div>
   );
