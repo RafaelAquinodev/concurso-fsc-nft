@@ -1,5 +1,11 @@
 "use client";
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
+import { formatUsd } from "@/utils/format-usd";
 import { NFT } from "@/types/nfts-types";
 import { Heart } from "lucide-react";
 import Image from "next/image";
@@ -13,6 +19,9 @@ const NftCard: React.FC<{ nft: NFT }> = ({ nft }) => {
   const topOffer = topOfferRaw ? Number(topOfferRaw).toFixed(2) : "Não listado";
 
   const paymentTokenSymbol = nft.last_sale?.payment_token.token_symbol || "";
+
+  const usdValueAtSale = formatUsd(nft.last_sale?.usd_price_at_sale || 0);
+  const currentUsdValue = formatUsd(nft.last_sale?.current_usd_value || 0);
 
   const rarityLabel = nft.rarity_label || "N/A";
 
@@ -88,13 +97,33 @@ const NftCard: React.FC<{ nft: NFT }> = ({ nft }) => {
             <span className="font-semibold">{rarityLabel}</span>
           </div>
 
-          <div className="flex justify-between gap-2">
-            <span>Top Oferta </span>
-            <div className="space-x-1 font-semibold">
-              <span>{topOffer}</span>
-              <span>{paymentTokenSymbol}</span>
-            </div>
-          </div>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <div className="flex justify-between gap-2">
+                <span>Top Oferta </span>
+                <div className="space-x-1 font-semibold">
+                  <span
+                    className={
+                      topOfferRaw && `cursor-help underline decoration-dotted`
+                    }
+                  >
+                    {topOffer}
+                  </span>
+                  <span>{paymentTokenSymbol}</span>
+                </div>
+              </div>
+            </TooltipTrigger>
+            {topOfferRaw && (
+              <TooltipContent side="right">
+                <div className="text-sm text-gray-500">
+                  {usdValueAtSale ? `Valor na venda: ${usdValueAtSale}` : ""}
+                </div>
+                <div className="text-sm text-gray-500">
+                  {usdValueAtSale ? `Valor atual: ${currentUsdValue}` : ""}
+                </div>
+              </TooltipContent>
+            )}
+          </Tooltip>
         </div>
       </div>
     </div>

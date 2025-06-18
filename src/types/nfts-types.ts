@@ -26,6 +26,8 @@ interface NFT {
   last_sale?: {
     price: string;
     price_formatted: string;
+    current_usd_value: string;
+    usd_price_at_sale: string;
     payment_token: {
       token_address: string;
       token_symbol: string;
