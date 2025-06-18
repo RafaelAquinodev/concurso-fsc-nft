@@ -23,12 +23,25 @@ interface NFT {
   floor_price: string;
   floor_price_currency: string;
   floor_price_usd: string;
+  last_sale?: {
+    price: string;
+    price_formatted: string;
+    payment_token: {
+      token_address: string;
+      token_symbol: string;
+      token_decimals: number;
+    };
+    transaction_hash: string;
+  };
   list_price?: {
     price: string;
     price_currency: string;
     price_usd: string;
   };
   metadata?: NFTMetadata;
+  rarity_label?: string;
+  rarity_percentage?: number;
+  rarity_rank?: number;
   last_token_uri_sync?: string;
   last_metadata_sync?: string;
   minter_address?: string;
@@ -37,6 +50,7 @@ interface NFT {
   };
   resolvedImageUrl?: string | null;
 }
+
 interface NFTResponse {
   total: number;
   page: number;
@@ -44,8 +58,10 @@ interface NFTResponse {
   cursor?: string;
   result: NFT[];
 }
-type SortKey = "name" | "floor_price";
+
+type SortKey = "name" | "floor_price" | "rarity_rank";
 type SortOrder = "asc" | "desc";
+
 interface UseWalletNFTsProps {
   address: string;
   chain?: string;
