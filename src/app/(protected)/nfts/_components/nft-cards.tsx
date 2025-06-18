@@ -4,6 +4,7 @@ import { useWalletNFTs } from "@/hooks/use-wallet-nfts";
 import React from "react";
 import NftCard from "./nft-card";
 import { useWallet } from "@/context/wallet-context";
+import { useFavoriteNFTs } from "@/hooks/use-favorite-nfts";
 
 const NftCards = () => {
   const { walletAddress } = useWallet();
@@ -13,6 +14,8 @@ const NftCards = () => {
       address: walletAddress,
       normalizeMetadata: true,
     });
+
+  const { addFavorite, removeFavorite, favorites } = useFavoriteNFTs();
 
   return (
     <div className="min-h-full w-full">
@@ -56,7 +59,13 @@ const NftCards = () => {
         <>
           <div className="mb-8 grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
             {nfts.map((nft) => (
-              <NftCard key={`${nft.token_address}-${nft.token_id}`} nft={nft} />
+              <NftCard
+                key={`${nft.token_address}-${nft.token_id}`}
+                nft={nft}
+                addFavorite={addFavorite}
+                removeFavorite={removeFavorite}
+                favorites={favorites}
+              />
             ))}
           </div>
 

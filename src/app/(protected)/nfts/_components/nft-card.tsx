@@ -6,12 +6,45 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { formatUsd } from "@/utils/format-usd";
-import { NFT } from "@/types/nfts-types";
+import { FavoriteNFT, NFT } from "@/types/nfts-types";
 import { Heart } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 
-const NftCard: React.FC<{ nft: NFT }> = ({ nft }) => {
+type NftCardProps = {
+  nft: NFT;
+  removeFavorite?: (nft: FavoriteNFT) => void;
+  addFavorite?: (nft: FavoriteNFT) => void;
+  favorites?: FavoriteNFT[];
+};
+
+const NftCard: React.FC<NftCardProps> = ({
+  nft,
+  addFavorite,
+  removeFavorite,
+  favorites,
+}) => {
+  const isFavorite = (favorites || []).some(
+    (fav) =>
+      fav.token_address === nft.token_address &&
+      fav.token_id === nft.token_id &&
+      fav.chain === nft.chain,
+  );
+
+  const handleFavoriteClick = () => {
+    const favoriteNFT: FavoriteNFT = {
+      token_address: nft.token_address,
+      token_id: nft.token_id,
+      chain: nft.chain,
+    };
+
+    if (isFavorite) {
+      removeFavorite?.(favoriteNFT);
+    } else {
+      addFavorite?.(favoriteNFT);
+    }
+  };
+
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
 
@@ -82,7 +115,14 @@ const NftCard: React.FC<{ nft: NFT }> = ({ nft }) => {
             {nft.metadata?.name || nft.name || `Token #${nft.token_id}`}
           </h3>
           <div className="ml-auto flex items-center">
-            <Heart className="h-5 w-5 cursor-pointer text-red-500 transition-colors hover:fill-red-500" />
+            <Heart
+              onClick={handleFavoriteClick}
+              className={`h-5 w-5 cursor-pointer transition-colors ${
+                isFavorite
+                  ? "fill-red-500 text-red-500"
+                  : "text-red-500 hover:fill-red-500"
+              }`}
+            />
           </div>
         </div>
 
