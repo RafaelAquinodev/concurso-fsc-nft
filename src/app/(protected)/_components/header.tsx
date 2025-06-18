@@ -9,6 +9,11 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Bell } from "lucide-react";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 const Header = () => {
   return (
@@ -20,11 +25,18 @@ const Header = () => {
         <SelectContent>
           <SelectGroup>
             <SelectLabel>Opções de carteiras</SelectLabel>
-            <SelectItem value="est">algum numero</SelectItem>
-            <SelectItem value="cst">outro numero</SelectItem>
-            <SelectItem value="mst">outro numero denovo kkkk</SelectItem>
-            <SelectItem value="pst">disgraca</SelectItem>
-            <SelectItem value="akst">outra porra de outro numero</SelectItem>
+            {walletCatalog.map((wallet) => (
+              <Tooltip key={wallet.address}>
+                <TooltipTrigger asChild>
+                  <SelectItem value={wallet.address}>{wallet.name}</SelectItem>
+                </TooltipTrigger>
+                <TooltipContent side="right">
+                  <div className="text-sm text-gray-500">
+                    {wallet.description}
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            ))}
           </SelectGroup>
         </SelectContent>
       </Select>
