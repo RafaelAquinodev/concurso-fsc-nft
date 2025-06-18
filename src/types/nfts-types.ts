@@ -10,6 +10,7 @@ interface NFTMetadata {
 
 interface NFT {
   token_address: string;
+  chain: string;
   token_id: string;
   owner_of: string;
   block_number: string;
