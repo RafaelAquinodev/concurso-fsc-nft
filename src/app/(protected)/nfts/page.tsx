@@ -1,17 +1,11 @@
 import { PageContainer } from "../_components/page-container";
-import NftCard from "./_components/nft-card";
+import NftCards from "./_components/nft-cards";
 
 const NftsPage = () => {
   return (
     <PageContainer>
       <div className="flex flex-wrap gap-8">
-        <NftCard />
-        <NftCard />
-        <NftCard />
-        <NftCard />
-        <NftCard />
-        <NftCard />
-        <NftCard />
+        <NftCards />
       </div>
     </PageContainer>
   );
