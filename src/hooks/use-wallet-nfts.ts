@@ -1,8 +1,6 @@
 import {
   NFT,
   NFTResponse,
-  SortKey,
-  SortOrder,
   UseWalletNFTsProps,
   UseWalletNFTsReturn,
 } from "@/types/nfts-types";
@@ -17,31 +15,12 @@ export const useWalletNFTs = ({
   mediaItems = false,
   includePrices = true,
   excludeSpam = true,
-  sortBy = "floor_price",
-  sortOrder = "asc",
 }: UseWalletNFTsProps): UseWalletNFTsReturn => {
   const [nfts, setNfts] = useState<NFT[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [totalCount, setTotalCount] = useState(0);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
-
-  const sortNFTs = (nfts: NFT[], key: SortKey, order: SortOrder) => {
-    return [...nfts].sort((a, b) => {
-      const valA = a[key] ?? "";
-      const valB = b[key] ?? "";
-
-      if (!isNaN(Number(valA)) && !isNaN(Number(valB))) {
-        return order === "asc"
-          ? Number(valA) - Number(valB)
-          : Number(valB) - Number(valA);
-      }
-
-      return order === "asc"
-        ? String(valA).localeCompare(String(valB))
-        : String(valB).localeCompare(String(valA));
-    });
-  };
 
   const hasPrice = (nft: NFT): boolean => {
     const floorPrice = nft.floor_price || nft.list_price?.price;
@@ -105,19 +84,15 @@ export const useWalletNFTs = ({
       const data: NFTResponse = await response.json();
 
       const filteredResults = data.result.filter(hasPrice);
-      const sortedResults = sortNFTs(filteredResults, sortBy, sortOrder);
-
-      const enhancedResults = sortedResults.map((nft) => ({
+        const enhancedResults = filteredResults.map((nft) => ({
         ...nft,
         resolvedImageUrl: resolveImageUrl(nft),
       }));
 
-      console.log("Resultados enhanced:", enhancedResults);
+        console.log("Nfts final result:", enhancedResults);
 
       if (loadMore) {
-        setNfts((prev) =>
-          sortNFTs([...prev, ...enhancedResults], sortBy, sortOrder),
-        );
+          setNfts((prev) => [...prev, ...enhancedResults]);
       } else {
         setNfts(enhancedResults);
       }
