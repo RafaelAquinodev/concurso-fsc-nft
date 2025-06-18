@@ -1,29 +1,27 @@
 "use client";
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { formatUsd } from "@/utils/format-usd";
 import { FavoriteNFT, NFT } from "@/types/nfts-types";
 import { Heart } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
-type NftCardProps = {
+type FavoriteNftCardProps = {
   nft: NFT;
-  removeFavorite?: (nft: FavoriteNFT) => void;
-  addFavorite?: (nft: FavoriteNFT) => void;
+  removeFavorite: (nft: FavoriteNFT) => void;
   favorites?: FavoriteNFT[];
 };
 
-const NftCard: React.FC<NftCardProps> = ({
+const FavoriteNftCard: React.FC<FavoriteNftCardProps> = ({
   nft,
-  addFavorite,
-  removeFavorite,
   favorites,
+  removeFavorite,
 }) => {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+
+  console.log("Favoritos aqui:", favorites);
+
   const isFavorite = (favorites || []).some(
     (fav) =>
       fav.token_address === nft.token_address &&
@@ -37,24 +35,8 @@ const NftCard: React.FC<NftCardProps> = ({
       token_id: nft.token_id,
       chain: nft.chain,
     };
-
-    if (isFavorite) {
-      removeFavorite?.(favoriteNFT);
-    } else {
-      addFavorite?.(favoriteNFT);
-    }
+    removeFavorite?.(favoriteNFT);
   };
-
-  const [imageError, setImageError] = useState(false);
-  const [imageLoading, setImageLoading] = useState(true);
-
-  const topOfferRaw = nft.last_sale?.price_formatted;
-  const topOffer = topOfferRaw ? Number(topOfferRaw).toFixed(2) : "Não listado";
-
-  const paymentTokenSymbol = nft.last_sale?.payment_token.token_symbol || "";
-
-  const usdValueAtSale = formatUsd(nft.last_sale?.usd_price_at_sale || 0);
-  const currentUsdValue = formatUsd(nft.last_sale?.current_usd_value || 0);
 
   const rarityLabel = nft.rarity_label || "N/A";
 
@@ -136,38 +118,20 @@ const NftCard: React.FC<NftCardProps> = ({
             <span>Raridade </span>
             <span className="font-semibold">{rarityLabel}</span>
           </div>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex justify-between gap-2">
-                <span>Top Oferta </span>
-                <div className="space-x-1 font-semibold">
-                  <span
-                    className={
-                      topOfferRaw && `cursor-help underline decoration-dotted`
-                    }
-                  >
-                    {topOffer}
-                  </span>
-                  <span>{paymentTokenSymbol}</span>
-                </div>
-              </div>
-            </TooltipTrigger>
-            {topOfferRaw && (
-              <TooltipContent side="right">
-                <div className="text-sm text-gray-500">
-                  {usdValueAtSale ? `Valor na venda: ${usdValueAtSale}` : ""}
-                </div>
-                <div className="text-sm text-gray-500">
-                  {usdValueAtSale ? `Valor atual: ${currentUsdValue}` : ""}
-                </div>
-              </TooltipContent>
-            )}
-          </Tooltip>
+          <Button className="mt-2 w-full" variant="outline" size="sm" asChild>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-purple-400 hover:text-purple-500"
+              href={`https://opensea.io/item/ethereum/${nft.token_address}/${nft.token_id}`}
+            >
+              Ver na OpenSea
+            </a>
+          </Button>
         </div>
       </div>
     </div>
   );
 };
 
-export default NftCard;
+export default FavoriteNftCard;
