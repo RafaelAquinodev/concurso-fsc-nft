@@ -5,7 +5,7 @@ import FavoriteNftCard from "./favorite-card";
 import { useFavoriteNFTs } from "@/hooks/use-favorite-nfts";
 
 const FavoriteNftCards = () => {
-  const { nfts, loading, error, removeFavorite } = useFavoriteNFTs();
+  const { nfts, loading, error, favorites, removeFavorite } = useFavoriteNFTs();
 
   return (
     <div className="min-h-full w-full">
@@ -46,6 +46,7 @@ const FavoriteNftCards = () => {
               key={`${nft.token_address}-${nft.token_id}`}
               nft={nft}
               removeFavorite={removeFavorite}
+              favorites={favorites}
             />
           ))}
         </div>

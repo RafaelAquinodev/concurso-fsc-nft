@@ -1,35 +1,42 @@
 "use client";
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { formatUsd } from "@/utils/format-usd";
 import { FavoriteNFT, NFT } from "@/types/nfts-types";
 import { Heart } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import { Button } from "@/components/ui/button";
 
 type FavoriteNftCardProps = {
   nft: NFT;
   removeFavorite: (nft: FavoriteNFT) => void;
+  favorites?: FavoriteNFT[];
 };
 
 const FavoriteNftCard: React.FC<FavoriteNftCardProps> = ({
   nft,
+  favorites,
   removeFavorite,
 }) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
 
-  const topOfferRaw = nft.last_sale?.price_formatted;
-  const topOffer = topOfferRaw ? Number(topOfferRaw).toFixed(2) : "Não listado";
+  console.log("Favoritos aqui:", favorites);
 
-  const paymentTokenSymbol = nft.last_sale?.payment_token.token_symbol || "";
+  const isFavorite = (favorites || []).some(
+    (fav) =>
+      fav.token_address === nft.token_address &&
+      fav.token_id === nft.token_id &&
+      fav.chain === nft.chain,
+  );
 
-  const usdValueAtSale = formatUsd(nft.last_sale?.usd_price_at_sale || 0);
-  const currentUsdValue = formatUsd(nft.last_sale?.current_usd_value || 0);
+  const handleFavoriteClick = () => {
+    const favoriteNFT: FavoriteNFT = {
+      token_address: nft.token_address,
+      token_id: nft.token_id,
+      chain: nft.chain,
+    };
+    removeFavorite?.(favoriteNFT);
+  };
 
   const rarityLabel = nft.rarity_label || "N/A";
 
@@ -89,17 +96,15 @@ const FavoriteNftCard: React.FC<FavoriteNftCardProps> = ({
           <h3 className="truncate text-lg font-bold text-gray-100">
             {nft.metadata?.name || nft.name || `Token #${nft.token_id}`}
           </h3>
-          <div
-            className="ml-auto flex items-center"
-            onClick={() =>
-              removeFavorite({
-                token_address: nft.token_address,
-                token_id: nft.token_id,
-                chain: "eth",
-              })
-            }
-          >
-            <Heart className="h-5 w-5 cursor-pointer text-red-500 transition-colors hover:fill-red-500" />
+          <div className="ml-auto flex items-center">
+            <Heart
+              onClick={handleFavoriteClick}
+              className={`h-5 w-5 cursor-pointer transition-colors ${
+                isFavorite
+                  ? "fill-red-500 text-red-500"
+                  : "text-red-500 hover:fill-red-500"
+              }`}
+            />
           </div>
         </div>
 
@@ -113,34 +118,16 @@ const FavoriteNftCard: React.FC<FavoriteNftCardProps> = ({
             <span>Raridade </span>
             <span className="font-semibold">{rarityLabel}</span>
           </div>
-
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <div className="flex justify-between gap-2">
-                <span>Top Oferta </span>
-                <div className="space-x-1 font-semibold">
-                  <span
-                    className={
-                      topOfferRaw && `cursor-help underline decoration-dotted`
-                    }
-                  >
-                    {topOffer}
-                  </span>
-                  <span>{paymentTokenSymbol}</span>
-                </div>
-              </div>
-            </TooltipTrigger>
-            {topOfferRaw && (
-              <TooltipContent side="right">
-                <div className="text-sm text-gray-500">
-                  {usdValueAtSale ? `Valor na venda: ${usdValueAtSale}` : ""}
-                </div>
-                <div className="text-sm text-gray-500">
-                  {usdValueAtSale ? `Valor atual: ${currentUsdValue}` : ""}
-                </div>
-              </TooltipContent>
-            )}
-          </Tooltip>
+          <Button className="mt-2 w-full" variant="outline" size="sm" asChild>
+            <a
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-sm text-purple-400 hover:text-purple-500"
+              href={`https://opensea.io/item/ethereum/${nft.token_address}/${nft.token_id}`}
+            >
+              Ver na OpenSea
+            </a>
+          </Button>
         </div>
       </div>
     </div>
