@@ -10,6 +10,7 @@ interface NFTMetadata {
 
 interface NFT {
   token_address: string;
+  chain: string;
   token_id: string;
   owner_of: string;
   block_number: string;
@@ -26,6 +27,8 @@ interface NFT {
   last_sale?: {
     price: string;
     price_formatted: string;
+    current_usd_value: string;
+    usd_price_at_sale: string;
     payment_token: {
       token_address: string;
       token_symbol: string;
@@ -59,9 +62,6 @@ interface NFTResponse {
   result: NFT[];
 }
 
-type SortKey = "name" | "floor_price" | "rarity_rank";
-type SortOrder = "asc" | "desc";
-
 interface UseWalletNFTsProps {
   address: string;
   chain?: string;
@@ -71,8 +71,6 @@ interface UseWalletNFTsProps {
   mediaItems?: boolean;
   includePrices?: boolean;
   excludeSpam?: boolean;
-  sortBy?: SortKey;
-  sortOrder?: SortOrder;
 }
 
 interface UseWalletNFTsReturn {
@@ -86,12 +84,17 @@ interface UseWalletNFTsReturn {
   loadMore: () => void;
 }
 
+type FavoriteNFT = {
+  token_address: string;
+  token_id: string;
+  chain: string;
+};
+
 export type {
   NFT,
   NFTMetadata,
   NFTResponse,
-  SortKey,
-  SortOrder,
+  FavoriteNFT,
   UseWalletNFTsProps,
   UseWalletNFTsReturn,
 };
