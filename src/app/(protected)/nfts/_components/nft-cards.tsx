@@ -18,20 +18,23 @@ const NftCards = () => {
     });
 
   return (
-    <div className="mx-auto min-h-full w-full place-content-center">
+    <div className="min-h-full w-full">
       {/* Loading */}
       {loading && nfts.length === 0 && (
-        <div className="mx-auto flex items-center justify-center py-12">
+        <div className="mx-auto flex min-h-screen w-full items-center justify-center">
+          <div className="mx-auto flex items-center justify-center p-12">
           <div className="text-center">
             <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-purple-600"></div>
-            <p className="text-gray-600">Carregando NFTs...</p>
+              <p className="text-gray-100">Carregando NFTs...</p>
+            </div>
           </div>
         </div>
       )}
 
       {/* Error */}
       {error && (
-        <div className="mb-8 rounded-xl border border-red-200 bg-red-50 p-6">
+        <div className="mx-auto flex min-h-screen w-full items-center justify-center">
+          <div className="mb-8 rounded-xl border border-red-200 bg-neutral-900 p-6">
           <div className="flex items-center">
             <div className="mr-3 text-red-500">⚠️</div>
             <div>
