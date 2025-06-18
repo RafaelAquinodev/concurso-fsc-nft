@@ -50,7 +50,7 @@ export function AppSidebar() {
   const pathname = usePathname();
 
   return (
-    <Sidebar className="bg-sidebar border-r h-screen fixed" collapsible="none">
+    <Sidebar className="bg-sidebar fixed h-screen border-r" collapsible="none">
       <SidebarHeader className="flex justify-center p-4">
         <Image src="/logo.svg" alt="FSC" width={40} height={40} />
       </SidebarHeader>
@@ -76,11 +76,8 @@ export function AppSidebar() {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton
-                  asChild
-                  isActive={pathname === "/subscription"}
-                >
-                  <Link href="/subscription">
+                <SidebarMenuButton asChild isActive={pathname === "/upgrade"}>
+                  <Link href="/upgrade">
                     <Trophy color="#878036" />
                     <span>Upgrade</span>
                   </Link>
