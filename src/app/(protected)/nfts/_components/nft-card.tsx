@@ -1,8 +1,8 @@
-/* eslint-disable @next/next/no-img-element */
 "use client";
 
 import { NFT } from "@/types/nfts-types";
 import { Heart } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 
 const NftCard: React.FC<{ nft: NFT }> = ({ nft }) => {
@@ -11,7 +11,10 @@ const NftCard: React.FC<{ nft: NFT }> = ({ nft }) => {
 
   const topOfferRaw = nft.last_sale?.price_formatted;
   const topOffer = topOfferRaw ? Number(topOfferRaw).toFixed(2) : "Não listado";
+
   const paymentTokenSymbol = nft.last_sale?.payment_token.token_symbol || "";
+
+  const rarityLabel = nft.rarity_label || "N/A";
 
   return (
     <div className="overflow-hidden rounded-xl bg-neutral-900 shadow-[0_5px_0_0_#b22ecd] transition-all duration-300 hover:scale-102 hover:shadow-[0_0px_5px_0_#b22ecd]">
@@ -24,9 +27,12 @@ const NftCard: React.FC<{ nft: NFT }> = ({ nft }) => {
                 <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-purple-600"></div>
               </div>
             )}
-            <img
+            <Image
               src={nft.resolvedImageUrl}
               alt={nft.metadata?.name || `NFT ${nft.token_id}`}
+              loading="lazy"
+              width={300}
+              height={300}
               className={`h-full w-full rounded-xl object-cover transition-opacity duration-300 ${
                 imageLoading ? "opacity-0" : "opacity-100"
               }`}
@@ -79,7 +85,7 @@ const NftCard: React.FC<{ nft: NFT }> = ({ nft }) => {
 
           <div className="flex justify-between">
             <span>Raridade </span>
-            <span className="font-semibold">{nft.rarity_label}</span>
+            <span className="font-semibold">{rarityLabel}</span>
           </div>
 
           <div className="flex justify-between gap-2">
