@@ -1,13 +1,15 @@
 import { FavoriteNFT, NFT } from "@/types/nfts-types";
 import { useEffect, useState, useCallback } from "react";
+import { usePathname } from "next/navigation";
 
 export const useFavoriteNFTs = () => {
+  const pathname = usePathname();
+
   const [favorites, setFavorites] = useState<FavoriteNFT[]>([]);
   const [nfts, setNfts] = useState<NFT[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Carrega os favoritos do localStorage
   const loadFavorites = useCallback(() => {
     try {
       const saved = JSON.parse(localStorage.getItem("favorites") || "[]");
@@ -17,7 +19,6 @@ export const useFavoriteNFTs = () => {
     }
   }, []);
 
-  // Adiciona um NFT aos favoritos
   const addFavorite = (nft: FavoriteNFT) => {
     const existing = favorites.find(
       (favorite) =>
@@ -28,11 +29,13 @@ export const useFavoriteNFTs = () => {
     if (!existing) {
       const updated = [...favorites, nft];
       setFavorites(updated);
-      localStorage.setItem("favorites", JSON.stringify(updated));
+
+      if (pathname === "/nfts") {
+        localStorage.setItem("favorites", JSON.stringify(updated));
+      }
     }
   };
 
-  // Remove um NFT dos favoritos
   const removeFavorite = (nft: FavoriteNFT) => {
     const updated = favorites.filter(
       (favorite) =>
@@ -46,7 +49,17 @@ export const useFavoriteNFTs = () => {
     localStorage.setItem("favorites", JSON.stringify(updated));
   };
 
-  // Fetch dos NFTs
+  const resolveImageUrl = (nft: NFT): string | null => {
+    const rawImage = nft.normalized_metadata?.image;
+    if (!rawImage) return null;
+
+    if (rawImage.startsWith("ipfs://")) {
+      return rawImage.replace("ipfs://", "https://ipfs.io/ipfs/");
+    }
+
+    return rawImage;
+  };
+
   const fetchFavorites = useCallback(async () => {
     if (favorites.length === 0) {
       setNfts([]);
@@ -58,11 +71,11 @@ export const useFavoriteNFTs = () => {
 
     try {
       const url = new URL(
-        "https://deep-index.moralis.io/api/v2.2/nft/multiple",
+        "https://deep-index.moralis.io/api/v2.2/nft/getMultipleNFTs?",
       );
+      url.searchParams.set("chain", "eth");
       url.searchParams.set("normalizeMetadata", "true");
       url.searchParams.set("media_items", "true");
-      url.searchParams.set("chain", "eth");
 
       const response = await fetch(url.toString(), {
         method: "POST",
@@ -83,7 +96,14 @@ export const useFavoriteNFTs = () => {
       }
 
       const data = await response.json();
-      setNfts(data.result || []);
+      console.log("Dados de NFTs favoritos:", data);
+
+      const enhancedResults = data.map((nft: NFT) => ({
+        ...nft,
+        resolvedImageUrl: resolveImageUrl(nft),
+      }));
+
+      setNfts(enhancedResults || []);
     } catch (err) {
       console.error("Erro ao buscar NFTs favoritos:", err);
       setError("Não foi possível carregar os favoritos.");
@@ -97,12 +117,10 @@ export const useFavoriteNFTs = () => {
   }, [loadFavorites]);
 
   useEffect(() => {
-    fetchFavorites();
-  }, [favorites, fetchFavorites]);
-
-  useEffect(() => {
-    localStorage.setItem("favorites", JSON.stringify(favorites));
-  }, [favorites]);
+    if (pathname === "/favorites") {
+      fetchFavorites();
+    }
+  }, [pathname, favorites, fetchFavorites]);
 
   return {
     nfts,
