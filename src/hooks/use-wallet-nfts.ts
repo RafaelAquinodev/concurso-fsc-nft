@@ -135,6 +135,8 @@ export const useWalletNFTs = ({
 
   useEffect(() => {
     if (address) {
+      setNfts([]);
+      setNextCursor(null);
       fetchNFTs();
     }
   }, [address, fetchNFTs]);
