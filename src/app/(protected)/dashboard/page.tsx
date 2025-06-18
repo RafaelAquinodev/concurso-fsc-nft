@@ -1,9 +1,11 @@
-import { PageContainer } from "@/app/(protected)/dashboard/page-container";
+import { PageContainer } from "@/app/(protected)/_components/page-container";
 
 const DashboardPage = () => {
   return (
     <PageContainer>
-      <h1>dashboard</h1>
+      <div className="h-[2000px]"> {/* pra ficar a cor roxa de fundo, tirar apos desenvolvimento*/ }
+        <h2>Dashboard</h2>
+      </div>
     </PageContainer>
   );
 };
