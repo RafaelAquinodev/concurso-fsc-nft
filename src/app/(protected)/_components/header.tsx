@@ -49,7 +49,7 @@ const Header = () => {
         </SelectContent>
       </Select>
       <div className="flex items-center gap-5">
-        <Bell strokeWidth={1.5} width={18} />
+        {/* <Bell strokeWidth={1.5} width={18} /> */}
         {/* <Avatar className="items center flex h-full justify-center"> */}
         <Avatar>
           <UserButton />
