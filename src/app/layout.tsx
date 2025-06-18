@@ -27,12 +27,13 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} dark bg-secondary antialiased`}
-      >
-        <ClerkProvider>{children}</ClerkProvider>
-        <WalletProvider>{children}</WalletProvider>
-      </body>
+      <ClerkProvider>
+        <body
+          className={`${geistSans.variable} ${geistMono.variable} dark bg-secondary antialiased`}
+        >
+          <WalletProvider>{children}</WalletProvider>
+        </body>
+      </ClerkProvider>
     </html>
   );
 }
