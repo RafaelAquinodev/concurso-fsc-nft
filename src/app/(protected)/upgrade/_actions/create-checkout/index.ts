@@ -30,5 +30,5 @@ export const createCheckout = async () => {
       },
     ],
   });
-  return { session: session.id };
+  return { sessionId: session.id };
 };
