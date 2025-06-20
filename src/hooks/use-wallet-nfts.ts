@@ -23,8 +23,7 @@ export const useWalletNFTs = ({
   const [nextCursor, setNextCursor] = useState<string | null>(null);
 
   const hasPrice = (nft: NFT): boolean => {
-    const floorPrice =
-      nft.floor_price || nft.list_price?.price || nft.last_sale?.price;
+    const floorPrice = nft.floor_price || nft.list_price?.price;
 
     return Boolean(floorPrice && floorPrice.trim());
   };
