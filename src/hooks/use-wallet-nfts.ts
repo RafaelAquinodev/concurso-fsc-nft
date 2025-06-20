@@ -23,7 +23,8 @@ export const useWalletNFTs = ({
   const [nextCursor, setNextCursor] = useState<string | null>(null);
 
   const hasPrice = (nft: NFT): boolean => {
-    const floorPrice = nft.floor_price || nft.list_price?.price;
+    const floorPrice =
+      nft.floor_price || nft.list_price?.price || nft.last_sale?.price;
 
     return Boolean(floorPrice && floorPrice.trim());
   };
@@ -40,7 +41,7 @@ export const useWalletNFTs = ({
   };
 
   const fetchNFTs = useCallback(
-    async (loadMore = false, customCursor?: string) => {
+    async (loadMore = false, customCursor?: string, retryAttempt = 0) => {
       if (!address || !address.trim()) {
         setError("Endereço da wallet é obrigatório");
         return;
@@ -89,6 +90,17 @@ export const useWalletNFTs = ({
           ...nft,
           resolvedImageUrl: resolveImageUrl(nft),
         }));
+
+        if (
+          !loadMore &&
+          enhancedResults.length === 0 &&
+          data.cursor &&
+          retryAttempt === 0
+        ) {
+          console.log("Primeira página sem NFTs, tentando próxima página...");
+          setLoading(false);
+          return fetchNFTs(false, data.cursor, 1);
+        }
 
         if (loadMore) {
           setNfts((prev) => [...prev, ...enhancedResults]);
