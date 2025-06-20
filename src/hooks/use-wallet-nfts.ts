@@ -90,8 +90,6 @@ export const useWalletNFTs = ({
           resolvedImageUrl: resolveImageUrl(nft),
         }));
 
-        console.log("Nfts final result:", enhancedResults);
-
         if (loadMore) {
           setNfts((prev) => [...prev, ...enhancedResults]);
         } else {

@@ -20,8 +20,6 @@ const FavoriteNftCard: React.FC<FavoriteNftCardProps> = ({
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
 
-  console.log("Favoritos aqui:", favorites);
-
   const isFavorite = (favorites || []).some(
     (fav) =>
       fav.token_address === nft.token_address &&
