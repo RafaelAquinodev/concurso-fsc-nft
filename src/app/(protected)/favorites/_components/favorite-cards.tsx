@@ -6,7 +6,6 @@ import { useFavoriteNFTs } from "@/hooks/use-favorite-nfts";
 
 const FavoriteNftCards = () => {
   const { nfts, loading, error, favorites, removeFavorite } = useFavoriteNFTs();
-  console.log("FavoriteNftCards - nfts:", nfts);
 
   return (
     <div className="min-h-full w-full">
