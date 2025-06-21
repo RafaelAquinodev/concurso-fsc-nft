@@ -2,6 +2,7 @@
 
 import { walletCatalog } from "@/data/wallet-catalog";
 import { createContext, useContext, useState, useEffect } from "react";
+import { useUser } from "@clerk/nextjs";
 
 type Wallet = {
   address: string;
@@ -22,10 +23,8 @@ type WalletContextType = {
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
-const WALLET_STORAGE_KEY = "selected_wallet_address";
-const CUSTOM_WALLETS_KEY = "custom_wallets";
-
 export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
+  const { user } = useUser();
   const [walletAddress, setWalletAddressState] = useState(
     walletCatalog[0].address,
   );
@@ -35,14 +34,21 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   const allWallets = [...walletCatalog, ...customWallets];
 
   useEffect(() => {
+    if (!user?.id) return;
+
+    const keys = {
+      walletKey: `selected_wallet_address_${user.id}`,
+      customWalletsKey: `custom_wallets_${user.id}`,
+    };
+
     try {
-      const savedCustomWallets = localStorage.getItem(CUSTOM_WALLETS_KEY);
+      const savedCustomWallets = localStorage.getItem(keys.customWalletsKey);
       if (savedCustomWallets) {
         const parsedWallets = JSON.parse(savedCustomWallets);
         setCustomWallets(parsedWallets);
       }
 
-      const savedAddress = localStorage.getItem(WALLET_STORAGE_KEY);
+      const savedAddress = localStorage.getItem(keys.walletKey);
       if (savedAddress) {
         const addressExists =
           walletCatalog.some((wallet) => wallet.address === savedAddress) ||
@@ -60,13 +66,17 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setIsLoaded(true);
     }
-  }, []);
+  }, [user?.id]);
 
   const setWalletAddress = (address: string) => {
     setWalletAddressState(address);
 
+    if (!user?.id) return;
+
+    const walletKey = `selected_wallet_address_${user.id}`;
+
     try {
-      localStorage.setItem(WALLET_STORAGE_KEY, address);
+      localStorage.setItem(walletKey, address);
     } catch (error) {
       console.error("Erro ao salvar endereço da carteira:", error);
     }
@@ -79,6 +89,10 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
       return false;
     }
 
+    if (!user?.id) return false;
+
+    const customWalletsKey = `custom_wallets_${user.id}`;
+
     const newWallet: Wallet = {
       address: wallet.address,
       name: wallet.name,
@@ -90,7 +104,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
 
     try {
       localStorage.setItem(
-        CUSTOM_WALLETS_KEY,
+        customWalletsKey,
         JSON.stringify(updatedCustomWallets),
       );
       return true;
@@ -101,6 +115,10 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const removeCustomWallet = (address: string) => {
+    if (!user?.id) return;
+
+    const customWalletsKey = `custom_wallets_${user.id}`;
+
     const updatedCustomWallets = customWallets.filter(
       (wallet) => wallet.address !== address,
     );
@@ -108,7 +126,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
 
     try {
       localStorage.setItem(
-        CUSTOM_WALLETS_KEY,
+        customWalletsKey,
         JSON.stringify(updatedCustomWallets),
       );
 
@@ -120,7 +138,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  if (!isLoaded) {
+  if (!user?.id || !isLoaded) {
     return null;
   }
 
