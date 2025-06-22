@@ -39,7 +39,7 @@ const Header = () => {
   );
 
   return (
-    <header className="flex w-full items-center justify-between border-b p-4">
+    <header className="flex w-full items-center justify-between gap-2 border-b p-4">
       <div className="flex items-center gap-2">
         <Select value={walletAddress} onValueChange={setWalletAddress}>
           <SelectTrigger className="w-[280px]">
@@ -64,7 +64,7 @@ const Header = () => {
                         <div className="text-sm text-gray-500">
                           {wallet.description}
                         </div>
-                        <div className="font-mono text-xs text-gray-400">
+                        <div className="hidden font-mono text-xs text-gray-400 md:block">
                           {wallet.address}
                         </div>
                       </div>
@@ -89,7 +89,7 @@ const Header = () => {
                       <div className="text-sm text-gray-500">
                         {wallet.description}
                       </div>
-                      <div className="font-mono text-xs text-gray-400">
+                      <div className="hidden font-mono text-xs text-gray-400 md:block">
                         {wallet.address}
                       </div>
                     </div>
