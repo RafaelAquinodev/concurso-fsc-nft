@@ -38,6 +38,22 @@ const FavoriteNftCards = () => {
         </div>
       )}
 
+      {/* Sem NFTs favoritos ainda */}
+      {favorites.length === 0 && !loading && !error && (
+        <div className="mx-auto flex min-h-screen w-full items-center justify-center">
+          <div className="mb-8 rounded-xl border border-gray-200 bg-neutral-900 p-6">
+            <div className="text-center">
+              <h3 className="mb-2 text-lg font-semibold text-gray-100">
+                Nenhum NFT favorito encontrado
+              </h3>
+              <p className="text-sm text-gray-400">
+                Adicione NFTs aos seus favoritos para vê-los aqui.
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Grid de NFTs */}
       {nfts.length > 0 && (
         <div className="mb-8 grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
