@@ -4,6 +4,7 @@ import { NFT } from "@/types/nfts-types";
 import { Heart } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import AcquirePlanButton from "./acquire-plan-button";
 
 const UpgradePlan = () => {
   return (
@@ -138,9 +139,7 @@ const UpgradePlan = () => {
             <p>Favoritos</p>
           </div>
           <div className="flex justify-center p-8">
-            <button className="rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 px-8 py-3 text-white shadow-lg transition-all duration-200 hover:from-purple-700 hover:to-blue-700 disabled:cursor-not-allowed disabled:opacity-50">
-              Comprar
-            </button>
+            <AcquirePlanButton />
           </div>
         </div>
       </div>
