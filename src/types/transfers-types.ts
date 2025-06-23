@@ -34,6 +34,7 @@ interface TransferResponse {
   page_size?: number;
   cursor?: string;
   result: Transfer[];
+  resolvedTransfers: Transfer[];
 }
 
 interface UseWalletTransfersProps {

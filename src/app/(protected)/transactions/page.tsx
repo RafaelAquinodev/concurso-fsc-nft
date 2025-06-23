@@ -1,11 +1,11 @@
 import { PageContainer } from "../_components/page-container";
-import WalletTransfersClient from "./_components/transfers-table";
+import TransferTable from "./_components/transfers-table";
 
 
 const TransactionPage = () => {
   return (
     <PageContainer>
-      <WalletTransfersClient />
+      <TransferTable />
     </PageContainer>
   );
 };

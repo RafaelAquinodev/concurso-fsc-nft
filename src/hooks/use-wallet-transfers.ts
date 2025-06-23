@@ -18,7 +18,12 @@ export const useWalletTransfers = ({
   const [totalCount, setTotalCount] = useState(0);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
 
-  
+  const resolveIPFS = (url: string) => {
+    if (url?.startsWith("ipfs://")) {
+      return url.replace("ipfs://", "https://ipfs.io/ipfs/");
+    }
+    return url;
+  };
 
   const fetchTransfers = useCallback(
     async (loadMore = false, customCursor?: string) => {
@@ -62,12 +67,20 @@ export const useWalletTransfers = ({
 
         const data: TransferResponse = await response.json();
 
-        console.log("Transferências encontradas:", data.result);
+        const resolvedTransfers = data.result.map((item) => ({
+          ...item,
+          metadata: {
+            ...item.metadata,
+            image: resolveIPFS(item?.metadata?.image || ""),
+          },
+        }));
+
+        console.log("Transferências encontradas:", resolvedTransfers);
 
         if (loadMore) {
-          setTransfers((prev) => [...prev, ...data.result]);
+          setTransfers((prev) => [...prev, ...resolvedTransfers]);
         } else {
-          setTransfers(data.result);
+          setTransfers(resolvedTransfers);
         }
 
         setTotalCount(data.total);
