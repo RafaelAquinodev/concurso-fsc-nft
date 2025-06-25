@@ -22,6 +22,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import { Separator } from "@/components/ui/separator";
+import { useUser } from "@clerk/nextjs";
 
 const items = [
   {
@@ -39,15 +40,17 @@ const items = [
     url: "/transactions",
     icon: ArrowRightLeft,
   },
-  {
-    title: "Favoritos",
-    url: "/favorites",
-    icon: Heart,
-  },
+  // {
+  //   title: "Favoritos",
+  //   url: "/favorites",
+  //   icon: Heart,
+  // },
 ];
 
 export function AppSidebar() {
   const pathname = usePathname();
+  const { user } = useUser();
+  const premiumPlan = user?.publicMetadata.subscriptionPlan === "premium";
 
   return (
     <Sidebar className="bg-sidebar fixed h-screen border-r" collapsible="none">
@@ -69,6 +72,22 @@ export function AppSidebar() {
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
+            {premiumPlan ? (
+              <SidebarMenuButton asChild isActive={pathname === "/favorites"}>
+                <Link href="/favorites">
+                  <Heart />
+                  <span>Favoritos</span>
+                </Link>
+              </SidebarMenuButton>
+            ) : (
+              <SidebarMenuButton asChild isActive={pathname === "/favorites"}>
+                {/* Aqui, trocar Link por span para desabilitar o clique */}
+                <span style={{ cursor: "not-allowed", opacity: 0.5 }}>
+                  <Heart />
+                  <span>Favoritos</span>
+                </span>
+              </SidebarMenuButton>
+            )}
           </SidebarGroupContent>
         </SidebarGroup>
         <Separator />
