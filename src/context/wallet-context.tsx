@@ -7,6 +7,7 @@ import {
   useState,
   useEffect,
   useCallback,
+  useMemo,
 } from "react";
 import { useUser } from "@clerk/nextjs";
 
@@ -37,7 +38,10 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   );
   const [customWallets, setCustomWallets] = useState<Wallet[]>([]);
 
-  const allWallets = [...walletCatalog, ...customWallets];
+  const allWallets = useMemo(
+    () => [...walletCatalog, ...customWallets],
+    [customWallets],
+  );
 
   const getWalletKey = useCallback(() => {
     if (!user?.id) return null;
