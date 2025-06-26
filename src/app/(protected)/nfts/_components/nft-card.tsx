@@ -10,6 +10,7 @@ import { FavoriteNFT, NFT } from "@/types/nfts-types";
 import { Heart } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import { useUser } from "@clerk/nextjs";
 
 type NftCardProps = {
   nft: NFT;
@@ -57,6 +58,8 @@ const NftCard: React.FC<NftCardProps> = ({
   const currentUsdValue = formatUsd(nft.last_sale?.current_usd_value || 0);
 
   const rarityLabel = nft.rarity_label || "N/A";
+  const { user } = useUser();
+  const premiumPlan = user?.publicMetadata.subscriptionPlan === "premium";
 
   return (
     <div className="overflow-hidden rounded-xl bg-neutral-900 shadow-[0_5px_0_0_#b22ecd] transition-all duration-300 hover:scale-102 hover:shadow-[0_0px_5px_0_#b22ecd]">
@@ -115,14 +118,16 @@ const NftCard: React.FC<NftCardProps> = ({
             {nft.metadata?.name || nft.name || `Token #${nft.token_id}`}
           </h3>
           <div className="ml-auto flex items-center">
-            <Heart
-              onClick={handleFavoriteClick}
-              className={`h-5 w-5 cursor-pointer transition-colors ${
-                isFavorite
-                  ? "fill-red-500 text-red-500"
-                  : "text-red-500 hover:fill-red-500"
-              }`}
-            />
+            {premiumPlan && (
+              <Heart
+                onClick={handleFavoriteClick}
+                className={`h-5 w-5 cursor-pointer transition-colors ${
+                  isFavorite
+                    ? "fill-red-500 text-red-500"
+                    : "text-red-500 hover:fill-red-500"
+                }`}
+              />
+            )}
           </div>
         </div>
 
