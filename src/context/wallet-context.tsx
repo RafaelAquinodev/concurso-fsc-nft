@@ -1,7 +1,14 @@
 "use client";
 
 import { walletCatalog } from "@/data/wallet-catalog";
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+  useMemo,
+} from "react";
 import { useUser } from "@clerk/nextjs";
 
 type Wallet = {
@@ -24,121 +31,146 @@ type WalletContextType = {
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
 
 export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
-  const { user } = useUser();
+  const { user, isLoaded } = useUser();
+
   const [walletAddress, setWalletAddressState] = useState(
     walletCatalog[0].address,
   );
   const [customWallets, setCustomWallets] = useState<Wallet[]>([]);
-  const [isLoaded, setIsLoaded] = useState(false);
 
-  const allWallets = [...walletCatalog, ...customWallets];
+  const allWallets = useMemo(
+    () => [...walletCatalog, ...customWallets],
+    [customWallets],
+  );
 
-  useEffect(() => {
-    if (!user?.id) return;
+  const getWalletKey = useCallback(() => {
+    if (!user?.id) return null;
+    return `selected_wallet_address_${user.id}`;
+  }, [user?.id]);
 
-    const keys = {
-      walletKey: `selected_wallet_address_${user.id}`,
-      customWalletsKey: `custom_wallets_${user.id}`,
-    };
+  const getCustomWalletsKey = useCallback(() => {
+    if (!user?.id) return null;
+    return `custom_wallets_${user.id}`;
+  }, [user?.id]);
+
+  const loadWalletData = useCallback(() => {
+    const walletKey = getWalletKey();
+    const customWalletsKey = getCustomWalletsKey();
+
+    if (!walletKey || !customWalletsKey) {
+      setCustomWallets([]);
+      setWalletAddressState(walletCatalog[0].address);
+      return;
+    }
 
     try {
-      const savedCustomWallets = localStorage.getItem(keys.customWalletsKey);
-      if (savedCustomWallets) {
-        const parsedWallets = JSON.parse(savedCustomWallets);
-        setCustomWallets(parsedWallets);
-      }
+      const savedCustomWallets = localStorage.getItem(customWalletsKey);
+      const parsedCustomWallets = savedCustomWallets
+        ? JSON.parse(savedCustomWallets)
+        : [];
+      setCustomWallets(parsedCustomWallets);
 
-      const savedAddress = localStorage.getItem(keys.walletKey);
+      const savedAddress = localStorage.getItem(walletKey);
       if (savedAddress) {
         const addressExists =
           walletCatalog.some((wallet) => wallet.address === savedAddress) ||
-          (savedCustomWallets &&
-            JSON.parse(savedCustomWallets).some(
-              (wallet: Wallet) => wallet.address === savedAddress,
-            ));
+          parsedCustomWallets.some(
+            (wallet: Wallet) => wallet.address === savedAddress,
+          );
 
         if (addressExists) {
           setWalletAddressState(savedAddress);
+        } else {
+          setWalletAddressState(walletCatalog[0].address);
         }
       }
     } catch (error) {
       console.error("Erro ao carregar dados das carteiras:", error);
-    } finally {
-      setIsLoaded(true);
+      setCustomWallets([]);
+      setWalletAddressState(walletCatalog[0].address);
     }
-  }, [user?.id]);
+  }, [getWalletKey, getCustomWalletsKey]);
 
-  const setWalletAddress = (address: string) => {
-    setWalletAddressState(address);
+  const saveCustomWallets = useCallback(
+    (walletsToSave: Wallet[]) => {
+      const customWalletsKey = getCustomWalletsKey();
+      if (!customWalletsKey) return;
 
-    if (!user?.id) return;
+      try {
+        localStorage.setItem(customWalletsKey, JSON.stringify(walletsToSave));
+      } catch (error) {
+        console.error("Erro ao salvar carteiras customizadas:", error);
+      }
+    },
+    [getCustomWalletsKey],
+  );
 
-    const walletKey = `selected_wallet_address_${user.id}`;
-
-    try {
-      localStorage.setItem(walletKey, address);
-    } catch (error) {
-      console.error("Erro ao salvar endereço da carteira:", error);
+  useEffect(() => {
+    if (isLoaded) {
+      loadWalletData();
     }
-  };
+  }, [isLoaded, loadWalletData]);
 
-  const addCustomWallet = (
-    wallet: Omit<Wallet, "address"> & { address: string },
-  ): boolean => {
-    if (allWallets.some((w) => w.address === wallet.address)) {
-      return false;
+  useEffect(() => {
+    if (isLoaded && !user) {
+      setCustomWallets([]);
+      setWalletAddressState(walletCatalog[0].address);
     }
+  }, [isLoaded, user]);
 
-    if (!user?.id) return false;
+  const setWalletAddress = useCallback(
+    (address: string) => {
+      setWalletAddressState(address);
 
-    const customWalletsKey = `custom_wallets_${user.id}`;
+      const walletKey = getWalletKey();
+      if (!walletKey) return;
 
-    const newWallet: Wallet = {
-      address: wallet.address,
-      name: wallet.name,
-      description: wallet.description,
-    };
+      try {
+        localStorage.setItem(walletKey, address);
+      } catch (error) {
+        console.error("Erro ao salvar endereço da carteira:", error);
+      }
+    },
+    [getWalletKey],
+  );
 
-    const updatedCustomWallets = [...customWallets, newWallet];
-    setCustomWallets(updatedCustomWallets);
+  const addCustomWallet = useCallback(
+    (wallet: Omit<Wallet, "address"> & { address: string }): boolean => {
+      if (allWallets.some((w) => w.address === wallet.address)) {
+        return false;
+      }
 
-    try {
-      localStorage.setItem(
-        customWalletsKey,
-        JSON.stringify(updatedCustomWallets),
-      );
+      const newWallet: Wallet = {
+        address: wallet.address,
+        name: wallet.name,
+        description: wallet.description,
+      };
+
+      const updatedCustomWallets = [...customWallets, newWallet];
+      setCustomWallets(updatedCustomWallets);
+      saveCustomWallets(updatedCustomWallets);
+
       return true;
-    } catch (error) {
-      console.error("Erro ao salvar carteira customizada:", error);
-      return false;
-    }
-  };
+    },
+    [allWallets, customWallets, saveCustomWallets],
+  );
 
-  const removeCustomWallet = (address: string) => {
-    if (!user?.id) return;
-
-    const customWalletsKey = `custom_wallets_${user.id}`;
-
-    const updatedCustomWallets = customWallets.filter(
-      (wallet) => wallet.address !== address,
-    );
-    setCustomWallets(updatedCustomWallets);
-
-    try {
-      localStorage.setItem(
-        customWalletsKey,
-        JSON.stringify(updatedCustomWallets),
+  const removeCustomWallet = useCallback(
+    (address: string) => {
+      const updatedCustomWallets = customWallets.filter(
+        (wallet) => wallet.address !== address,
       );
+      setCustomWallets(updatedCustomWallets);
+      saveCustomWallets(updatedCustomWallets);
 
       if (walletAddress === address) {
         setWalletAddress(walletCatalog[0].address);
       }
-    } catch (error) {
-      console.error("Erro ao remover carteira customizada:", error);
-    }
-  };
+    },
+    [customWallets, walletAddress, setWalletAddress, saveCustomWallets],
+  );
 
-  if (!user?.id || !isLoaded) {
+  if (!isLoaded) {
     return null;
   }
 
