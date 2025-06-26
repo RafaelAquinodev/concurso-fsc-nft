@@ -16,7 +16,7 @@ export default function TransferTable() {
     });
 
   return (
-    <div className="relative space-y-4">
+    <div className="relative flex flex-col justify-center space-y-4">
       {/*TODO: Adicionar essa parte do código no lugar no select de carteiras*/}
       <div className="top-0 z-50 flex items-center justify-start">
         <div className="flex items-center gap-6 rounded-md bg-neutral-900 px-4 py-2">
@@ -76,13 +76,15 @@ export default function TransferTable() {
       ))}
 
       {hasNextPage && (
-        <button
-          onClick={loadMore}
-          disabled={loading}
-          className="rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 px-8 py-3 text-white shadow-lg transition-all duration-200 hover:from-purple-700 hover:to-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
-        >
-          {loading ? "Carregando..." : "Carregar mais"}
-        </button>
+        <div className="flex justify-center">
+          <button
+            onClick={loadMore}
+            disabled={loading}
+            className="rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 px-8 py-3 text-white shadow-lg transition-all duration-200 hover:from-purple-700 hover:to-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {loading ? "Carregando..." : "Carregar mais"}
+          </button>
+        </div>
       )}
     </div>
   );

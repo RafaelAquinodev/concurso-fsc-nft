@@ -68,7 +68,7 @@ export default function TransferCard({ transfer, walletAddress }: TransferCardPr
               {transfer.current_usd_value && (
                 <TooltipContent side="right">
                   <div className="text-sm text-gray-500">
-                    {`Valor atual: ${formatUsd(transfer.current_usd_value)}`}
+                    {`Valor em dolar: ${formatUsd(transfer.current_usd_value)}`}
                   </div>
                 </TooltipContent>
               )}
@@ -86,7 +86,7 @@ export default function TransferCard({ transfer, walletAddress }: TransferCardPr
               {transfer.current_usd_value && (
                 <TooltipContent side="right">
                   <div className="text-sm text-gray-500">
-                    {`Valor atual: ${formatUsd(transfer.current_usd_value)}`}
+                    {`Valor em dolar: ${formatUsd(transfer.current_usd_value)}`}
                   </div>
                 </TooltipContent>
               )}
