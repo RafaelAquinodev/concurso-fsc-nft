@@ -8,6 +8,7 @@ import { truncateAddress } from "@/utils/truncate-address";
 import React from "react";
 import TransferCard from "../../transactions/_components/transfer-card";
 import { useTrendingNFTs } from "@/hooks/use-trending-nfts";
+import TrendingNFTsCarousel from "./trending-nft-carousel";
 
 const Dashboard = () => {
   const { walletAddress, allWallets } = useWallet();
@@ -17,7 +18,7 @@ const Dashboard = () => {
   const { transfers } = useWalletTransfers({
     address: walletAddress,
   });
-  const { trendingCollections } = useTrendingNFTs();
+  const { trendingCollections, loading } = useTrendingNFTs();
 
   const walletName = allWallets.find(
     (wallet) => wallet.address === walletAddress,
@@ -26,8 +27,8 @@ const Dashboard = () => {
   return (
     <>
       {walletName && walletAddress ? (
-        <>
-          <div className="grid w-full grid-cols-3 gap-4 p-4">
+        <div className="space-y-6">
+          <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
             {/* Informações da Wallet */}
             <div className="gradient-border col-span-2 space-y-4 rounded-lg bg-neutral-900 p-4 text-white">
               <div className="mx-auto flex flex-col items-center justify-center">
@@ -65,48 +66,29 @@ const Dashboard = () => {
                 Transações Recentes
               </h2>
               {transfers.length > 0 ? (
-                transfers.map((transfer, index) => (
-                  <TransferCard
-                    key={`${transfer.transaction_hash}-${index}`}
-                    transfer={transfer}
-                    walletAddress={walletAddress}
-                  />
-                ))
+                <div className="mt-4 max-h-72 overflow-y-auto">
+                  {transfers.slice(0, 3).map((transfer, index) => (
+                    <TransferCard
+                      key={`${transfer.transaction_hash}-${index}`}
+                      transfer={transfer}
+                      walletAddress={walletAddress}
+                    />
+                  ))}
+                </div>
               ) : (
-                <p className="text-center text-sm">
+                <p className="mt-4 text-center text-sm">
                   Nenhuma transferência encontrada.
                 </p>
               )}
             </div>
           </div>
 
-          {/* Top NFTs */}
-          <div>
-            <h2 className="text-center text-lg font-semibold text-white">
-              NFTs em Alta
-            </h2>
-            {trendingCollections &&
-              trendingCollections.map((collection, index) => (
-                <div
-                  key={`${collection.collection_id}-${index}`}
-                  className="p-4"
-                >
-                  <div className="flex items-center gap-4">
-                    <img
-                      src={collection.collection_image}
-                      alt={collection.collection_title}
-                      className="h-16 w-16 rounded-lg"
-                    />
-                    <div>
-                      <h3 className="text-sm font-semibold text-white">
-                        {collection.collection_title}
-                      </h3>
-                    </div>
-                  </div>
-                </div>
-              ))}
-          </div>
-        </>
+          {/* Carrossel de NFTs Trending */}
+          <TrendingNFTsCarousel
+            collections={trendingCollections}
+            loading={loading}
+          />
+        </div>
       ) : (
         <div className="flex h-full w-full items-center justify-center">
           <p className="text-white">
