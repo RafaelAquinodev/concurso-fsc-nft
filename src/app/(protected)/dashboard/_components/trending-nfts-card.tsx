@@ -39,7 +39,7 @@ const TrendingNftCard: React.FC<NftCardProps> = ({ collection }) => {
     <div className="group relative flex">
       {/* Imagem */}
       <div className="absolute top-1/2 left-0 z-10 h-12 w-12 -translate-y-1/2 transform">
-        <div className="relative flex h-full w-full items-center justify-center rounded-lg bg-neutral-800 ring-1 ring-neutral-900 transition duration-300 group-hover:ring-purple-500">
+        <div className="bg-brand-indigo relative flex h-full w-full items-center justify-center rounded-lg ring-1 ring-neutral-600 transition duration-300 group-hover:ring-purple-500">
           {collection.collection_image && !imageError ? (
             <>
               {imageLoading && (
@@ -77,8 +77,9 @@ const TrendingNftCard: React.FC<NftCardProps> = ({ collection }) => {
           )}
         </div>
       </div>
+
       {/* Card */}
-      <div className="group ml-6 flex w-40 cursor-pointer items-center overflow-hidden rounded-xl border border-neutral-800 bg-neutral-900 transition-all duration-300 hover:scale-102 hover:border-purple-500">
+      <div className="group bg-brand-indigo ml-6 flex w-40 cursor-pointer items-center overflow-hidden rounded-xl border border-neutral-600 transition-all duration-300 hover:scale-102 hover:border-purple-500">
         <div className="flex min-w-0 flex-1 flex-col justify-between space-y-2 p-3 pl-8">
           <h3 className="truncate text-sm font-semibold text-white transition-colors group-hover:text-purple-400">
             {collection.collection_title}
@@ -96,13 +97,13 @@ const TrendingNftCard: React.FC<NftCardProps> = ({ collection }) => {
               <span className="flex-shrink-0 text-xs text-gray-400">24h</span>
               <div className="flex min-w-0 items-center gap-1">
                 {priceChange.isPositive ? (
-                  <TrendingUp className="h-3 w-3 flex-shrink-0 text-green-500" />
+                  <TrendingUp className="h-3 w-3 flex-shrink-0 text-green-400" />
                 ) : (
-                  <TrendingDown className="h-3 w-3 flex-shrink-0 text-red-500" />
+                  <TrendingDown className="h-3 w-3 flex-shrink-0 text-red-400" />
                 )}
                 <span
                   className={`truncate text-xs font-semibold ${
-                    priceChange.isPositive ? "text-green-500" : "text-red-500"
+                    priceChange.isPositive ? "text-green-400" : "text-red-400"
                   }`}
                 >
                   {priceChange.value}

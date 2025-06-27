@@ -15,7 +15,7 @@ export default function RecentTransferCard({
   walletAddress,
 }: RecentTransferCardProps) {
   return (
-    <div className="flex justify-between gap-2 space-y-2 rounded-xl bg-neutral-900">
+    <div className="flex justify-between gap-2 space-y-2 rounded-xl">
       {/* Imagem */}
       <div className="flex items-center gap-4">
         {transfer.metadata?.image ? (
@@ -60,12 +60,12 @@ export default function RecentTransferCard({
             {/* Valor em ETH */}
             {transfer.price_formatted &&
             walletAddress === transfer.buyer_address ? (
-              <p className="text-chart-2 flex gap-1 text-sm">
+              <p className="flex gap-1 text-sm text-red-400">
                 {transfer.price_formatted} {transfer.token_symbol}
-                <TrendingDown className="text-chart-2" width={16} />
+                <TrendingDown className="text-red-400" width={16} />
               </p>
             ) : (
-              <p className="text-chart-1 flex gap-1 text-sm">
+              <p className="flex gap-1 text-sm text-green-400">
                 {transfer.price_formatted} {transfer.token_symbol}
                 <TrendingUp className="text-chart-1" width={16} />
               </p>

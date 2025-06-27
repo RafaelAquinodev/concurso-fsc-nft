@@ -111,6 +111,10 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@theme {
+  --color-brand-indigo: oklch(0.2225 0.0194 284.72);
+}
+
 @layer utilities {
   .gradient-border {
     position: relative;
