@@ -111,6 +111,28 @@
   --sidebar-ring: oklch(0.556 0 0);
 }
 
+@layer utilities {
+  .gradient-border {
+    position: relative;
+    z-index: 0;
+  }
+
+  .gradient-border::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(45deg, #00d2ff, #9f6ee9, #ff00cc);
+    -webkit-mask:
+      linear-gradient(#fff 0 0) content-box,
+      linear-gradient(#fff 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    z-index: -1;
+  }
+}
+
 @layer base {
   * {
     @apply border-border;
