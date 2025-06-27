@@ -10,7 +10,7 @@ type TrendingNFTsCarouselProps = {
   loading?: boolean;
 };
 
-const SLIDE_WIDTH = 180;
+const SLIDE_WIDTH = 190;
 const MAX_CARDS_LIMIT = 12;
 
 const TrendingNFTsCarousel: React.FC<TrendingNFTsCarouselProps> = ({
