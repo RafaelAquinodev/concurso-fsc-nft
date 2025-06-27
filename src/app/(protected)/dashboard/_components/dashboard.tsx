@@ -6,9 +6,9 @@ import { useWalletStats } from "@/hooks/use-wallet-stats";
 import { useWalletTransfers } from "@/hooks/use-wallet-transfers";
 import { truncateAddress } from "@/utils/truncate-address";
 import React from "react";
-import TransferCard from "../../transactions/_components/transfer-card";
 import { useTrendingNFTs } from "@/hooks/use-trending-nfts";
 import TrendingNFTsCarousel from "./trending-nft-carousel";
+import RecentTransferCard from "./recent-transfer-card";
 
 const Dashboard = () => {
   const { walletAddress, allWallets } = useWallet();
@@ -61,14 +61,14 @@ const Dashboard = () => {
             </div>
 
             {/* Transações Recentes */}
-            <div className="gradient-border col-span-1 w-full rounded-lg bg-neutral-900 p-4 text-white">
+            <div className="gradient-border col-span-1 min-h-[292px] w-full rounded-lg bg-neutral-900 p-4 text-white">
               <h2 className="text-center text-lg font-semibold">
                 Transações Recentes
               </h2>
               {transfers.length > 0 ? (
                 <div className="mt-4 max-h-72 overflow-y-auto">
                   {transfers.slice(0, 3).map((transfer, index) => (
-                    <TransferCard
+                    <RecentTransferCard
                       key={`${transfer.transaction_hash}-${index}`}
                       transfer={transfer}
                       walletAddress={walletAddress}
