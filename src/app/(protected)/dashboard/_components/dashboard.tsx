@@ -75,11 +75,13 @@ const Dashboard = () => {
             </div>
 
             {/* Transações Recentes */}
-            <div className="gradient-border bg-brand-indigo col-span-1 min-h-[292px] w-full rounded-lg p-4 text-white">
-              <h2 className="text-lg font-semibold">Transações Recentes</h2>
+            <div className="gradient-border bg-brand-indigo col-span-1 min-h-[372px] w-full rounded-lg p-6 text-white">
+              <h2 className="mb-4 text-lg font-semibold">
+                Transações Recentes
+              </h2>
               {transfers.length > 0 ? (
-                <div className="mt-4 max-h-72 overflow-y-auto">
-                  {transfers.slice(0, 3).map((transfer, index) => (
+                <div className="flex flex-col gap-2 overflow-y-auto">
+                  {transfers.slice(0, 4).map((transfer, index) => (
                     <RecentTransferCard
                       key={`${transfer.transaction_hash}-${index}`}
                       transfer={transfer}

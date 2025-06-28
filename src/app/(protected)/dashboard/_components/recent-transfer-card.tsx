@@ -15,7 +15,7 @@ export default function RecentTransferCard({
   walletAddress,
 }: RecentTransferCardProps) {
   return (
-    <div className="flex justify-between gap-2 space-y-2 rounded-xl">
+    <div className="flex justify-between gap-2 rounded-xl">
       {/* Imagem */}
       <div className="flex items-center gap-4">
         {transfer.metadata?.image ? (

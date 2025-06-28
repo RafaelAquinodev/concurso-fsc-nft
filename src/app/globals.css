@@ -112,7 +112,7 @@
 }
 
 @theme {
-  --color-brand-indigo: oklch(0.2225 0.0194 284.72);
+  --color-brand-indigo: oklch(0.2322 0.027 294.03);
 }
 
 @layer utilities {
