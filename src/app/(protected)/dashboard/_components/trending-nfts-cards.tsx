@@ -78,8 +78,8 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
   if (loading) {
     return (
       <div className="rounded-xl p-6">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="flex items-center gap-2 text-xl font-bold text-white">
+        <div className="mb-6 flex">
+          <h2 className="flex gap-2 text-xl font-bold text-white">
             <TrendingUp className="h-5 w-5 text-purple-500" />
             NFTs em Alta
           </h2>
@@ -129,11 +129,12 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
 
   return (
     <div ref={containerRef} className="mx-auto w-full">
-      <div className="mb-6 flex items-center justify-center">
+      <div className="mb-6 flex items-center gap-4">
         <h2 className="flex items-center gap-2 text-lg font-bold text-white">
-          <TrendingUp className="h-5 w-5 text-purple-500" />
+          <TrendingUp className="h-5 w-5 text-purple-400" />
           NFTs em Alta
         </h2>
+        <span className="mt-1 text-sm text-gray-400">Ultimas 24 horas</span>
       </div>
       <div className="mx-auto flex justify-center gap-4">
         {collections.slice(0, maxCards).map((collection) => (
