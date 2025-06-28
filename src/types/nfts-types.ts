@@ -13,6 +13,7 @@ interface NFT {
   chain: string;
   token_id: string;
   owner_of: string;
+  current_usd_value: string;
   block_number: string;
   block_number_minted: string;
   token_hash: string;

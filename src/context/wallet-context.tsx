@@ -11,13 +11,13 @@ import {
 } from "react";
 import { useUser } from "@clerk/nextjs";
 
-type Wallet = {
+export type Wallet = {
   address: string;
   name: string;
   description: string;
 };
 
-type WalletContextType = {
+export type WalletContextType = {
   walletAddress: string;
   setWalletAddress: (address: string) => void;
   allWallets: Wallet[];
