@@ -7,7 +7,7 @@ type InfoCardProps = {
 
 const InfoCard = ({ name, value, icon, gradient }: InfoCardProps) => {
   return (
-    <div className="bg-brand-indigo rounded-xl border border-neutral-600 p-5">
+    <div className="gradient-border bg-brand-indigo rounded-xl p-5">
       <div className="flex flex-col items-center justify-center gap-4">
         <div className={`rounded-lg bg-gradient-to-tl p-3 ${gradient}`}>
           {icon}
