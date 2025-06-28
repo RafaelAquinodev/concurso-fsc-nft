@@ -59,7 +59,9 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
 
     resizeObserver.observe(containerRef.current);
 
-    handleResize();
+    requestAnimationFrame(() => {
+      handleResize();
+    });
 
     return () => {
       resizeObserver.disconnect();
@@ -77,34 +79,20 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
 
   if (loading) {
     return (
-      <div className="rounded-xl p-6">
-        <div className="mb-6 flex">
-          <h2 className="flex gap-2 text-xl font-bold text-white">
-            <TrendingUp className="h-5 w-5 text-purple-500" />
+      <div ref={containerRef} className="mx-auto w-full">
+        <div className="mb-6 flex items-center gap-4">
+          <h2 className="flex items-center gap-2 text-lg font-bold text-white">
+            <TrendingUp className="h-5 w-5 text-purple-400" />
             NFTs em Alta
           </h2>
+          <span className="mt-1 text-sm text-gray-400">Últimas 24 horas</span>
         </div>
-        <div className="flex gap-4 overflow-x-auto">
-          {Array.from({ length: 6 }).map((_, index) => (
+        <div className="flex items-center justify-center gap-4 overflow-x-auto">
+          {Array.from({ length: 4 }).map((_, index) => (
             <div
               key={index}
-              className="w-44 flex-shrink-0 animate-pulse overflow-hidden rounded-xl bg-neutral-900"
-            >
-              <div className="h-32 bg-neutral-800"></div>
-              <div className="space-y-2 p-3">
-                <div className="h-4 rounded bg-neutral-800"></div>
-                <div className="space-y-1">
-                  <div className="flex justify-between">
-                    <div className="h-3 w-8 rounded bg-neutral-800"></div>
-                    <div className="h-3 w-12 rounded bg-neutral-800"></div>
-                  </div>
-                  <div className="flex justify-between">
-                    <div className="h-3 w-6 rounded bg-neutral-800"></div>
-                    <div className="h-3 w-10 rounded bg-neutral-800"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
+              className="bg-brand-indigo h-[88px] w-[180px] animate-pulse rounded-lg"
+            ></div>
           ))}
         </div>
       </div>
@@ -113,14 +101,15 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
 
   if (!collections || collections.length === 0) {
     return (
-      <div className="w-full rounded-xl bg-neutral-950 p-6">
-        <div className="mb-6 flex items-center justify-between">
-          <h2 className="flex items-center gap-2 text-xl font-bold text-white">
-            <TrendingUp className="h-5 w-5 text-purple-500" />
+      <div ref={containerRef} className="mx-auto w-full">
+        <div className="mb-6 flex items-center gap-4">
+          <h2 className="flex items-center gap-2 text-lg font-bold text-white">
+            <TrendingUp className="h-5 w-5 text-purple-400" />
             NFTs em Alta
           </h2>
+          <span className="mt-1 text-sm text-gray-400">Últimas 24 horas</span>
         </div>
-        <div className="py-8 text-center">
+        <div className="bg-brand-indigo rounded-lg py-8 text-center">
           <p className="text-gray-400">Nenhuma coleção encontrada</p>
         </div>
       </div>
@@ -134,12 +123,12 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
           <TrendingUp className="h-5 w-5 text-purple-400" />
           NFTs em Alta
         </h2>
-        <span className="mt-1 text-sm text-gray-400">Ultimas 24 horas</span>
+        <span className="mt-1 text-sm text-gray-400">Últimas 24 horas</span>
       </div>
       <div className="mx-auto flex justify-center gap-4">
-        {collections.slice(0, maxCards).map((collection) => (
+        {collections.slice(0, maxCards).map((collection, index) => (
           <TrendingNftCard
-            key={collection.collection_id}
+            key={`${collection.collection_id}-${index}`}
             collection={collection}
           />
         ))}
