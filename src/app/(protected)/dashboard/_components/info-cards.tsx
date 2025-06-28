@@ -8,12 +8,23 @@ import {
   Layers2Icon,
   WalletMinimalIcon,
 } from "lucide-react";
+import { useWalletValue } from "@/hooks/use-wallet-value";
 
 const InfoCards = () => {
   const { walletAddress } = useWallet();
   const { stats } = useWalletStats({
     address: walletAddress,
   });
+  const { value } = useWalletValue({
+    address: walletAddress,
+  });
+
+  const estimatedValueUSDFormatted = new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  }).format(parseFloat(value?.estimatedValueUSD || "0"));
 
   const infos = [
     {
@@ -30,13 +41,13 @@ const InfoCards = () => {
     },
     {
       name: "Valor da Carteira",
-      value: "$3,000.00",
+      value: estimatedValueUSDFormatted || "0",
       icon: <WalletMinimalIcon />,
       gradient: "from-green-600 to-emerald-400",
     },
     {
       name: "Valor em ETH",
-      value: "150",
+      value: value?.estimatedValueETH || "0",
       icon: <ActivityIcon />,
       gradient: "from-purple-600 to-indigo-400",
     },
