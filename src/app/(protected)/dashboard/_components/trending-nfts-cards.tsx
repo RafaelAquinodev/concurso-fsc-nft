@@ -5,7 +5,7 @@ import { TrendingUp } from "lucide-react";
 import TrendingNftCard from "./trending-nfts-card";
 import { TrendingCollection } from "@/hooks/use-trending-nfts";
 
-type TrendingNFTsCarouselProps = {
+type TrendingNFTsCardsProps = {
   collections?: TrendingCollection[];
   loading?: boolean;
 };
@@ -13,7 +13,7 @@ type TrendingNFTsCarouselProps = {
 const SLIDE_WIDTH = 190;
 const MAX_CARDS_LIMIT = 12;
 
-const TrendingNFTsCarousel: React.FC<TrendingNFTsCarouselProps> = ({
+const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
   collections,
   loading = false,
 }) => {
@@ -147,4 +147,4 @@ const TrendingNFTsCarousel: React.FC<TrendingNFTsCarouselProps> = ({
   );
 };
 
-export default TrendingNFTsCarousel;
+export default TrendingNFTsCards;
