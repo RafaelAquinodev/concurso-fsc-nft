@@ -15,18 +15,23 @@ interface TransferCardProps {
   walletAddress: string;
 }
 
-export default function TransferCard({ transfer, walletAddress }: TransferCardProps) {
+export default function TransferCard({
+  transfer,
+  walletAddress,
+}: TransferCardProps) {
   return (
     <div className="flex justify-between rounded-xl bg-neutral-900 p-4">
       <div className="flex items-center gap-4">
         {transfer.metadata?.image ? (
-          <Image
-            src={transfer.metadata.image}
-            alt={transfer.metadata.name || "NFT"}
-            width={50}
-            height={50}
-            className="rounded-sm"
-          />
+          <div className="w-[50px] h-[50px]">
+            <Image
+              src={transfer.metadata.image}
+              alt={transfer.metadata.name || "NFT"}
+              width={50}
+              height={50}
+              className="rounded-sm w-full h-full object-cover object-center"
+            />
+          </div>
         ) : (
           <div className="flex h-[50px] w-[50px] items-center justify-center">
             <div className="text-center text-gray-500">
@@ -108,8 +113,7 @@ export default function TransferCard({ transfer, walletAddress }: TransferCardPr
         </div>
 
         <div className="flex items-center gap-2">
-          {transfer?.marketplace &&
-          walletAddress === transfer.buyer_address ? (
+          {transfer?.marketplace && walletAddress === transfer.buyer_address ? (
             <p className="text-sm">
               Comprado em: {""}
               {transfer.marketplace}
