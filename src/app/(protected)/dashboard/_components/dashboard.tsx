@@ -5,11 +5,11 @@ import { useWalletTransfers } from "@/hooks/use-wallet-transfers";
 import { truncateAddress } from "@/utils/truncate-address";
 import React from "react";
 import { useTrendingNFTs } from "@/hooks/use-trending-nfts";
-import RecentTransferCard from "./recent-transfer-card";
-import InfoCards from "./info-cards";
-import TrendingNFTsCards from "./trending-nfts-cards";
+import RecentTransferCard from "./recent-transfer-card/recent-transfer-card";
+import InfoCards from "./info-cards/info-cards";
+import TrendingNFTsCards from "./trending-cards/trending-nfts-cards";
 import { WalletIcon } from "lucide-react";
-import WalletPerformanceCard from "./wallet-performance-card";
+import WalletPerformanceCard from "./wallet-performance-card/wallet-performance-card";
 
 const Dashboard = () => {
   const { walletAddress, allWallets } = useWallet();
