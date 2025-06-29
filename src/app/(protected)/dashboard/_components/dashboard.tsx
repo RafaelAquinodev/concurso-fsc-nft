@@ -9,6 +9,7 @@ import RecentTransferCard from "./recent-transfer-card";
 import InfoCards from "./info-cards";
 import TrendingNFTsCards from "./trending-nfts-cards";
 import { WalletIcon } from "lucide-react";
+import WalletPerformanceCard from "./wallet-performance-card";
 
 const Dashboard = () => {
   const { walletAddress, allWallets } = useWallet();
@@ -24,7 +25,7 @@ const Dashboard = () => {
   return (
     <>
       {walletName && walletAddress ? (
-        <div className="space-y-6">
+        <div className="space-y-8">
           <div className="mb-6 flex items-center gap-4">
             <h2 className="flex items-center gap-2 text-lg font-bold text-white">
               <WalletIcon className="h-5 w-5 text-purple-400" />
@@ -43,36 +44,9 @@ const Dashboard = () => {
             loading={loading}
           />
 
-          <div className="grid w-full grid-cols-1 gap-4 md:grid-cols-3">
-            {/* Balanço */}
-            <div className="gradient-border bg-brand-indigo col-span-2 rounded-xl p-6 lg:col-span-2">
-              <h2 className="mb-4 text-xl font-bold">Balanço</h2>
-              <div className="mb-6 grid grid-cols-3 gap-4">
-                <div>
-                  <div className="text-sm text-gray-400">Total ETH</div>
-                  <div className="text-2xl font-bold">21,533.10</div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-400">Gains</div>
-                  <div className="text-2xl font-bold text-green-400">
-                    +7.048 ETH
-                  </div>
-                  <div className="chart-line mt-2"></div>
-                </div>
-                <div>
-                  <div className="text-sm text-gray-400">Expenses</div>
-                  <div className="text-2xl font-bold text-red-400">
-                    -2.013 ETH
-                  </div>
-                  <div className="chart-line red mt-2"></div>
-                </div>
-              </div>
-              <div className="flex h-40 items-center justify-center rounded-lg bg-[#2a2a3a]">
-                <span className="text-gray-500">
-                  Balance chart visualization
-                </span>
-              </div>
-            </div>
+          <div className="grid w-full grid-cols-1 gap-4 min-[1000px]:grid-cols-2 xl:grid-cols-3">
+            {/* Performance da Carteira */}
+            <WalletPerformanceCard address={walletAddress} />
 
             {/* Transações Recentes */}
             <div className="gradient-border bg-brand-indigo col-span-1 min-h-[372px] w-full rounded-lg p-6 text-white">
