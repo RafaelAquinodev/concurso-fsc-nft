@@ -18,7 +18,7 @@ export default function TransferTable() {
   return (
     <div className="relative flex flex-col justify-center space-y-4">
       {/*TODO: Adicionar essa parte do código no lugar no select de carteiras*/}
-      <div className="top-0 z-50 flex items-center justify-start">
+      <div className="top-0 flex items-center justify-start">
         <div className="flex items-center gap-6 rounded-md bg-neutral-900 px-4 py-2">
           <div className="flex items-center gap-2">
             <TrendingUp className="text-chart-1" />
