@@ -54,7 +54,7 @@ const InfoCards = () => {
   ];
 
   return (
-    <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4">
+    <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 min-[1100px]:max-[1370px]:grid-cols-2">
       {infos.map((info) => (
         <InfoCard
           key={info.name}
