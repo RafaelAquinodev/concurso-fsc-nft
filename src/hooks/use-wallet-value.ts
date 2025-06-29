@@ -31,7 +31,6 @@ export const useWalletValue = ({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Buscar amostra de NFTs (primeiros 40)
   const {
     nfts,
     loading: nftsLoading,
@@ -43,7 +42,6 @@ export const useWalletValue = ({
     includePrices: true,
   });
 
-  // Buscar estatísticas totais da carteira
   const {
     stats,
     loading: statsLoading,
@@ -53,7 +51,6 @@ export const useWalletValue = ({
     chain,
   });
 
-  // Calcular estimativa baseada na amostra
   const calculatedValue = useMemo(() => {
     if (!nfts || nfts.length === 0 || !stats) {
       return null;
@@ -61,9 +58,7 @@ export const useWalletValue = ({
 
     const totalNfts = parseInt(stats.nfts);
     const nftsSize = nfts.length;
-    console.log("Total dasd NFTs:", nfts.length);
 
-    // Filtrar NFTs que têm preços válidos
     const nftsWithPrices = nfts.filter((nft) => {
       const floorPriceUSD = parseFloat(nft.floor_price_usd || "0");
       const floorPriceETH = parseFloat(nft.floor_price || "0");
@@ -82,7 +77,6 @@ export const useWalletValue = ({
       };
     }
 
-    // Calcular médias dos floor prices
     const totalFloorPriceUSD = nftsWithPrices.reduce((sum, nft) => {
       return sum + parseFloat(nft.floor_price_usd || "0");
     }, 0);
@@ -94,7 +88,6 @@ export const useWalletValue = ({
     const averageFloorPriceUSD = totalFloorPriceUSD / nftsWithPrices.length;
     const averageFloorPriceETH = totalFloorPriceETH / nftsWithPrices.length;
 
-    // Extrapolação para o total da carteira
     const priceRatio = nftsWithPrices.length / nftsSize;
     const estimatedNftsWithValue = Math.floor(totalNfts * priceRatio);
 
@@ -112,7 +105,6 @@ export const useWalletValue = ({
     };
   }, [nfts, stats]);
 
-  // Gerenciar estados de loading e error
   useEffect(() => {
     const isLoading = nftsLoading || statsLoading;
     const hasError = nftsError || statsError;

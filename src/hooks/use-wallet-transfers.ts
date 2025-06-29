@@ -45,14 +45,12 @@ export const useWalletTransfers = ({
         const url = new URL(
           `https://deep-index.moralis.io/api/v2.2/wallets/${address.trim()}/nfts/trades`,
         );
-        console.log("URL usada:", url.toString());
         url.searchParams.set("chain", chain);
         url.searchParams.set("format", "decimal");
         url.searchParams.set("order", "desc");
         url.searchParams.set("limit", limit.toString());
         url.searchParams.set("include_prices", "true");
         url.searchParams.set("cursor", customCursor || cursor || "");
-
 
         const response = await fetch(url.toString(), {
           headers: {

@@ -1,6 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
 
-// Tipos para as coleções trending
 export interface TrendingCollection {
   collection_id: string;
   collection_title: string;
