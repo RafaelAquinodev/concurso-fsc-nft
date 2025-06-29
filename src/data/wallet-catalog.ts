@@ -1,6 +1,6 @@
 export const walletCatalog = [
   {
-    name: "binance-nft-marketplace.eth",
+    name: "Binance Nft Marketplace",
     address: "0xe2a83b15fc300d8457eb9e176f98d92a8ff40a49",
     description: "Maior carteira de Bored Apes",
   },
