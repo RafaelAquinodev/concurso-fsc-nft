@@ -50,11 +50,11 @@ const Header = () => {
         {!["/favorites", "/upgrade"].includes(pathname) && (
           <div className="flex items-center gap-2">
             <Select value={walletAddress} onValueChange={setWalletAddress}>
-              <SelectTrigger className="w-[280px]">
+              <SelectTrigger className="max-w-[300px] min-w-[200px]">
                 <SelectValue placeholder="Selecione uma carteira" />
               </SelectTrigger>
               <SelectContent>
-                {/* Carteiras customizadas */}
+                {/* Carteiras adicionadas */}
                 {customWallets.length > 0 && (
                   <SelectGroup>
                     <SelectLabel>Minhas Carteiras</SelectLabel>
@@ -111,15 +111,13 @@ const Header = () => {
             <Tooltip>
               <AddWalletModal>
                 <TooltipTrigger asChild>
-                  <Button className="flex items-center gap-2 rounded-lg bg-purple-600 px-2 py-1 text-white transition-colors hover:bg-purple-700">
+                  <Button className="bg-brand-purple hover:bg-brand-purple/80 flex items-center gap-2 rounded-lg px-2 py-1 text-white transition-colors">
                     <PlusIcon width={20} />
                   </Button>
                 </TooltipTrigger>
               </AddWalletModal>
               <TooltipContent side="right">
-                <div className="text-sm text-gray-500">
-                  Adicionar nova carteira
-                </div>
+                <div className="text-sm text-gray-500">Gerenciar Carteiras</div>
               </TooltipContent>
             </Tooltip>
           </div>

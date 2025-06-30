@@ -83,7 +83,7 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
       const success = addCustomWallet({
         address: formData.address.trim(),
         name: formData.name.trim(),
-        description: formData.description.trim() || "Carteira customizada",
+        description: formData.description.trim() || formData.name.trim(),
       });
 
       if (success) {
@@ -141,15 +141,15 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
         <DialogHeader>
           <DialogTitle>Gerenciar Carteiras</DialogTitle>
           <DialogDescription>
-            Adicione novas carteiras ou gerencie suas carteiras customizadas.
+            Adicione novas carteiras ou gerencie suas carteiras.
           </DialogDescription>
         </DialogHeader>
 
         {/* Formulário para Adicionar Nova Carteira */}
         <div className="py-">
-          <h3 className="mb-3 flex items-center gap-2 text-sm font-medium">
+          <h3 className="mb-3 flex items-center gap-1 text-sm font-medium">
             <PlusIcon size={16} />
-            Adicionar Nova Carteira
+            Adicionar nova carteira
           </h3>
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4">
@@ -209,7 +209,7 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
           <div className="py-">
             <h3 className="mb-3 flex items-center gap-2 text-sm font-medium">
               <WalletIcon size={16} />
-              Suas Carteiras Customizadas ({customWallet.length})
+              Suas carteiras ({customWallet.length})
             </h3>
             <div className="max-h-48 space-y-2 overflow-y-auto">
               {customWallet.map((wallet) => (
