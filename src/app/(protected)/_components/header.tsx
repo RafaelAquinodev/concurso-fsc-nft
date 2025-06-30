@@ -43,7 +43,7 @@ const Header = () => {
   );
 
   return (
-    <header className="flex w-full items-center justify-between gap-2 border-b p-4">
+    <header className="bg-brand-indigo flex w-full items-center justify-between gap-2 border-b p-4">
       <div className="flex items-center gap-3">
         <SidebarTrigger />
 

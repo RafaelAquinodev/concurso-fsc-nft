@@ -101,11 +101,11 @@
   --chart-2: oklch(0.628 0.2577 29.23);
   --chart-3: oklch(0.4288 0.1545 320.46);
   --chart-4: oklch(0.627 0.265 303.9);
-  --sidebar: oklch(0.1637 0.0282 317.44);
+  --sidebar: var(--color-brand-indigo);
   --sidebar-foreground: oklch(1 0 0);
   --sidebar-primary: oklch(0.4288 0.1545 320.46);
   --sidebar-primary-foreground: oklch(1 0 0);
-  --sidebar-accent: var(--color-brand-indigo);
+  --sidebar-accent: oklch(0.2834 0.027 294.03);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
@@ -120,7 +120,6 @@
     position: relative;
     z-index: 0;
   }
-
   .gradient-border::before {
     content: "";
     position: absolute;
@@ -149,6 +148,10 @@
     height: 2px;
     background: linear-gradient(45deg, #00d2ff, #9f6ee9, #ff00cc);
     z-index: -1;
+  }
+
+  .gradient-brand {
+    background: linear-gradient(45deg, #00d2ff, #9f6ee9, #ff00cc);
   }
 }
 
