@@ -23,6 +23,7 @@ import { useWallet } from "@/context/wallet-context";
 import { AddWalletModal } from "./add-wallet-modal";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
+import { SidebarTrigger } from "@/components/ui/sidebar";
 
 const Header = () => {
   const pathname = usePathname();
@@ -43,7 +44,9 @@ const Header = () => {
 
   return (
     <header className="flex w-full items-center justify-between gap-2 border-b p-4">
-      <div>
+      <div className="flex items-center gap-3">
+        <SidebarTrigger />
+
         {!["/favorites", "/upgrade"].includes(pathname) && (
           <div className="flex items-center gap-2">
             <Select value={walletAddress} onValueChange={setWalletAddress}>
