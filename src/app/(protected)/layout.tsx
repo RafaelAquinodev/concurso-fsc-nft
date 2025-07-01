@@ -6,6 +6,7 @@ import { useEffect } from "react";
 import Header from "./_components/header";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./_components/app-sidebar";
+import { tiny5 } from "@/utils/font";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { isSignedIn, isLoaded } = useUser();
@@ -23,7 +24,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider defaultOpen={true}>
-      <AppSidebar />
+      <AppSidebar fontClass={tiny5.className} />
       <div className="w-full">
         <Header />
         <main className="">{children}</main>

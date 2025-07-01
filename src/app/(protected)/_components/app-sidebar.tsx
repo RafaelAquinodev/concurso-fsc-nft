@@ -49,7 +49,7 @@ const items = [
   },
 ];
 
-export function AppSidebar() {
+export function AppSidebar({ fontClass }: Props) {
   const pathname = usePathname();
   const { user } = useUser();
   const premiumPlan = user?.publicMetadata.subscriptionPlan === "premium";
@@ -64,9 +64,14 @@ export function AppSidebar() {
         {open ? (
           <div className="ml-1 flex items-center gap-2 self-start">
             <Image src="/logo.svg" alt="Logo" width={32} height={32} />
-            <h2 className="gradient-underline text-xl font-semibold">
-              NFTMetrics
-            </h2>
+            <div className="relative flex flex-col">
+              <h2 className={`${fontClass} text-2xl`}>Etrics</h2>
+              <span
+                className={`${fontClass} absolute top-[22px] left-0 text-[10px]`}
+              >
+                NFT&apos;s
+              </span>
+            </div>
           </div>
         ) : (
           <div className="flex flex-col items-center gap-4">
