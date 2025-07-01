@@ -31,6 +31,10 @@ import {
   Tooltip,
 } from "@/components/ui/tooltip";
 
+type Props = {
+  fontClass: string;
+};
+
 const items = [
   {
     title: "Dashboard",
@@ -53,7 +57,7 @@ export function AppSidebar({ fontClass }: Props) {
   const pathname = usePathname();
   const { user } = useUser();
   const premiumPlan = user?.publicMetadata.subscriptionPlan === "premium";
-  const { open } = useSidebar();
+  const { open, openMobile } = useSidebar();
 
   return (
     <Sidebar
@@ -61,8 +65,8 @@ export function AppSidebar({ fontClass }: Props) {
       className="group w-64 border-[#34323f] transition-all duration-300 group-data-[collapsible=icon]:w-14"
     >
       <SidebarHeader className="flex min-h-[70px] items-center justify-center">
-        {open ? (
-          <div className="ml-1 flex items-center gap-2 self-start">
+        {open || openMobile ? (
+          <div className="ml-2 flex items-center gap-2 self-start">
             <Image src="/logo.svg" alt="Logo" width={32} height={32} />
             <div className="relative flex flex-col">
               <h2 className={`${fontClass} text-2xl`}>Etrics</h2>
@@ -145,7 +149,7 @@ export function AppSidebar({ fontClass }: Props) {
       </SidebarContent>
       {!premiumPlan && (
         <SidebarFooter>
-          {open ? (
+          {open || openMobile ? (
             <div className="mt-auto px-4 py-6">
               <div className="bg-secondary rounded-xl border border-gray-600 p-4">
                 <h3 className="text-sm font-medium text-white">
