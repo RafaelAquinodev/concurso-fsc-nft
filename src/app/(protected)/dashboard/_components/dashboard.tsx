@@ -28,7 +28,7 @@ const Dashboard = () => {
         <div className="space-y-8">
           <div className="mb-6 flex items-center gap-4">
             <h2 className="flex items-center gap-2 text-lg font-bold text-white">
-              <WalletIcon className="h-5 w-5 text-purple-400" />
+              <WalletIcon className="text-brand-purple h-5 w-5" />
               {walletName}
             </h2>
             <span className="mt-1 text-sm text-gray-400">
