@@ -20,16 +20,16 @@ export default function TransferCard({
   walletAddress,
 }: TransferCardProps) {
   return (
-    <div className="flex justify-between rounded-xl bg-neutral-900 p-4">
+    <div className="bg-brand-indigo flex justify-between rounded-xl p-4">
       <div className="flex items-center gap-4">
         {transfer.metadata?.image ? (
-          <div className="w-[50px] h-[50px]">
+          <div className="h-[50px] w-[50px]">
             <Image
               src={transfer.metadata.image}
               alt={transfer.metadata.name || "NFT"}
               width={50}
               height={50}
-              className="rounded-sm w-full h-full object-cover object-center"
+              className="h-full w-full rounded-sm object-cover object-center"
             />
           </div>
         ) : (
@@ -56,7 +56,7 @@ export default function TransferCard({
           <p className="font-semibold">
             {transfer.metadata?.name || "NFT sem nome"}
           </p>
-          <p className="text-xs text-gray-600">
+          <p className="text-xs text-gray-400">
             Coleção: {transfer.collection_name || "Desconhecida"}
           </p>
           {transfer.price_formatted &&
@@ -64,9 +64,9 @@ export default function TransferCard({
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex items-center gap-2">
-                  <p className="text-chart-2 flex cursor-help gap-1 text-sm underline decoration-dotted">
+                  <p className="flex cursor-help gap-1 text-sm text-red-400 underline decoration-dotted">
                     {transfer.price_formatted} {transfer.token_symbol}
-                    <TrendingDown className="text-chart-2" width={16} />
+                    <TrendingDown className="text-red-400" width={16} />
                   </p>
                 </div>
               </TooltipTrigger>
@@ -82,9 +82,9 @@ export default function TransferCard({
             <Tooltip>
               <TooltipTrigger asChild>
                 <div className="flex items-center gap-2">
-                  <p className="text-chart-1 flex cursor-help gap-1 text-sm underline decoration-dotted">
+                  <p className="flex cursor-help gap-1 text-sm text-green-400 underline decoration-dotted">
                     {transfer.price_formatted} {transfer.token_symbol}
-                    <TrendingUp className="text-chart-1" width={16} />
+                    <TrendingUp className="text-green-400" width={16} />
                   </p>
                 </div>
               </TooltipTrigger>
@@ -102,11 +102,11 @@ export default function TransferCard({
 
       <div className="flex flex-col items-end justify-center gap-2">
         <div className="flex items-center gap-2">
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-400">
             {transfer.block_timestamp &&
               new Date(transfer.block_timestamp).toLocaleDateString()}
           </p>
-          <p className="text-sm text-gray-600">
+          <p className="text-sm text-gray-400">
             {transfer.block_timestamp &&
               new Date(transfer.block_timestamp).toLocaleTimeString()}
           </p>

@@ -17,16 +17,15 @@ export default function TransferTable() {
 
   return (
     <div className="relative flex flex-col justify-center space-y-4">
-      {/*TODO: Adicionar essa parte do código no lugar no select de carteiras*/}
       <div className="top-0 flex items-center justify-start">
-        <div className="flex items-center gap-6 rounded-md bg-neutral-900 px-4 py-2">
+        <div className="bg-brand-indigo flex items-center gap-6 rounded-md px-4 py-2">
           <div className="flex items-center gap-2">
-            <TrendingUp className="text-chart-1" />
+            <TrendingUp className="text-green-400" />
             <p className="text-sm text-white">Vendas</p>
           </div>
 
           <div className="flex items-center gap-2">
-            <TrendingDown className="text-chart-2" />
+            <TrendingDown className="text-red-400" />
             <p className="text-sm text-white">Compras</p>
           </div>
         </div>
@@ -36,7 +35,7 @@ export default function TransferTable() {
         <div className="mx-auto flex min-h-screen w-full items-center justify-center">
           <div className="mx-auto flex items-center justify-center p-12">
             <div className="text-center">
-              <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-purple-600"></div>
+              <div className="border-brand-purple mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
               <p className="text-gray-100">Carregando Transações...</p>
             </div>
           </div>
@@ -44,17 +43,16 @@ export default function TransferTable() {
       )}
       {error && (
         <div className="mx-auto flex min-h-screen w-full items-center justify-center">
-          <div className="mb-8 rounded-xl border border-red-200 bg-neutral-900 p-6">
+          <div className="bg-brand-accent-muted mb-8 rounded-xl border border-red-200 p-6">
             <div className="flex items-center">
               <div className="mr-3 text-red-500">⚠️</div>
               <div>
-                <h3 className="font-semibold text-red-800">
-                  Erro ao carregar NFTs
+                <h3 className="font-semibold text-white">
+                  Erro ao carregar Transações
                 </h3>
-                <p className="mt-1 text-sm text-red-600">{error}</p>
                 <button
                   onClick={refetch}
-                  className="mt-3 rounded-lg bg-red-600 px-4 py-2 text-white transition-colors hover:bg-red-700"
+                  className="mt-3 rounded-lg bg-red-400 px-4 py-2 text-white transition-colors hover:bg-red-500"
                 >
                   Tentar Novamente
                 </button>
@@ -80,7 +78,7 @@ export default function TransferTable() {
           <button
             onClick={loadMore}
             disabled={loading}
-            className="rounded-xl bg-gradient-to-r from-purple-600 to-blue-600 px-8 py-3 text-white shadow-lg transition-all duration-200 hover:from-purple-700 hover:to-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+            className="gradient-brand cursor-pointer rounded-xl px-8 py-3 text-white shadow-lg transition-all duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
           >
             {loading ? "Carregando..." : "Carregar mais"}
           </button>

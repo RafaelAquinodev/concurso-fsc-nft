@@ -1,7 +1,7 @@
 "use client";
 
 import { FavoriteNFT, NFT } from "@/types/nfts-types";
-import { Heart } from "lucide-react";
+import { StarIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -39,14 +39,14 @@ const FavoriteNftCard: React.FC<FavoriteNftCardProps> = ({
   const rarityLabel = nft.rarity_label || "N/A";
 
   return (
-    <div className="overflow-hidden rounded-xl bg-neutral-900 shadow-[0_5px_0_0_#b22ecd] transition-all duration-300 hover:scale-102 hover:shadow-[0_0px_5px_0_#b22ecd]">
+    <div className="overflow-hidden rounded-xl bg-neutral-900 shadow-[0_5px_0_0_#6934ab] transition-all duration-300 hover:scale-102 hover:shadow-[0_0px_5px_0_#6934ab]">
       {/* Imagem do NFT */}
-      <div className="relative h-64 bg-neutral-900">
+      <div className="bg-brand-indigo relative h-64">
         {nft.resolvedImageUrl && !imageError ? (
           <>
             {imageLoading && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="h-8 w-8 animate-spin rounded-full border-b-2 border-purple-600"></div>
+                <div className="border-brand-purple h-8 w-8 animate-spin rounded-full border-b-2"></div>
               </div>
             )}
             <Image
@@ -68,8 +68,8 @@ const FavoriteNftCard: React.FC<FavoriteNftCardProps> = ({
         ) : (
           // Se a imagem não carregar, mostra svg
           <div className="flex h-full w-full items-center justify-center">
-            <div className="text-center text-gray-500">
-              <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-lg bg-gray-200">
+            <div className="text-center">
+              <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-lg bg-gray-400">
                 <svg
                   className="h-8 w-8"
                   fill="currentColor"
@@ -89,18 +89,18 @@ const FavoriteNftCard: React.FC<FavoriteNftCardProps> = ({
       </div>
 
       {/* Informações do NFT */}
-      <div className="p-4">
+      <div className="bg-brand-indigo p-4">
         <div className="mb-2 flex">
-          <h3 className="truncate text-lg font-bold text-gray-100">
+          <h3 className="truncate text-lg font-bold text-white">
             {nft.metadata?.name || nft.name || `Token #${nft.token_id}`}
           </h3>
           <div className="ml-auto flex items-center">
-            <Heart
+            <StarIcon
               onClick={handleFavoriteClick}
-              className={`h-5 w-5 cursor-pointer transition-colors ${
+              className={`h-5 w-5 cursor-pointer transition-colors duration-200 ${
                 isFavorite
-                  ? "fill-red-500 text-red-500"
-                  : "text-red-500 hover:fill-red-500"
+                  ? "fill-brand-purple text-brand-purple"
+                  : "text-brand-purple hover:fill-brand-purple"
               }`}
             />
           </div>

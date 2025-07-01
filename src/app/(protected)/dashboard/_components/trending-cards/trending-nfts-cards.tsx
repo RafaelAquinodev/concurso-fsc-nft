@@ -104,7 +104,7 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
       <div ref={containerRef} className="mx-auto w-full">
         <div className="mb-6 flex items-center gap-4">
           <h2 className="flex items-center gap-2 text-lg font-bold text-white">
-            <TrendingUp className="h-5 w-5 text-purple-400" />
+            <TrendingUp className="text-brand-purple h-5 w-5" />
             NFTs em Alta
           </h2>
           <span className="mt-1 text-sm text-gray-400">Últimas 24 horas</span>
@@ -120,7 +120,7 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
     <div ref={containerRef} className="mx-auto w-full">
       <div className="mb-6 flex items-center gap-4">
         <h2 className="flex items-center gap-2 text-lg font-bold text-white">
-          <TrendingUp className="h-5 w-5 text-purple-400" />
+          <TrendingUp className="text-brand-purple h-5 w-5" />
           NFTs em Alta
         </h2>
         <span className="mt-1 text-sm text-gray-400">Últimas 24 horas</span>
