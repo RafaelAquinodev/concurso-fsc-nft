@@ -19,13 +19,15 @@ export default function RecentTransferCard({
       {/* Imagem */}
       <div className="flex items-center gap-4">
         {transfer.metadata?.image ? (
-          <Image
-            src={transfer.metadata.image}
-            alt={transfer.metadata.name || "NFT"}
-            width={50}
-            height={50}
-            className="rounded-sm"
-          />
+          <div className="h-[50px] w-[50px]">
+            <Image
+              src={transfer.metadata.image}
+              alt={transfer.metadata.name || "NFT"}
+              width={50}
+              height={50}
+              className="rounded-sm"
+            />
+          </div>
         ) : (
           <div className="flex h-[50px] w-[50px] items-center justify-center">
             <div className="text-center text-gray-500">
