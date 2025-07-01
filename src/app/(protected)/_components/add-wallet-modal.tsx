@@ -137,7 +137,7 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-[600px]">
+      <DialogContent className="h-full max-h-[80vh] overflow-y-auto sm:max-w-[600px]">
         <DialogHeader>
           <DialogTitle>Gerenciar Carteiras</DialogTitle>
           <DialogDescription>
@@ -146,7 +146,7 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
         </DialogHeader>
 
         {/* Formulário para Adicionar Nova Carteira */}
-        <div className="py-">
+        <div>
           <h3 className="mb-3 flex items-center gap-1 text-sm font-medium">
             <PlusIcon size={16} />
             Adicionar nova carteira
@@ -211,7 +211,7 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
               <WalletIcon size={16} />
               Suas carteiras ({customWallet.length})
             </h3>
-            <div className="max-h-48 space-y-2 overflow-y-auto">
+            <div className="max-h-64 space-y-2 overflow-y-auto">
               {customWallet.map((wallet) => (
                 <div
                   key={wallet.address}
