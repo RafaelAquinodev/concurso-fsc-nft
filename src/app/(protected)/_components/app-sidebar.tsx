@@ -94,7 +94,7 @@ export function AppSidebar() {
                 </SidebarMenuItem>
               ))}
             </SidebarMenu>
-            {!premiumPlan ? (
+            {premiumPlan ? (
               <SidebarMenu className="mt-2 group-data-[collapsible=icon]:mt-6 group-data-[collapsible=icon]:gap-6">
                 <SidebarMenuButton
                   size="lg"
@@ -138,7 +138,7 @@ export function AppSidebar() {
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
-      {premiumPlan && (
+      {!premiumPlan && (
         <SidebarFooter>
           {open ? (
             <div className="mt-auto px-4 py-6">
