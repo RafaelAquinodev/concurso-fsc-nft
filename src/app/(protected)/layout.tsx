@@ -7,6 +7,7 @@ import Header from "./_components/header";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { AppSidebar } from "./_components/app-sidebar";
 import { tiny5 } from "@/utils/font";
+import SidebarTriggerWrapper from "./sidebar-trigger-wrapper";
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { isSignedIn, isLoaded } = useUser();
@@ -27,7 +28,10 @@ export default function Layout({ children }: { children: React.ReactNode }) {
       <AppSidebar fontClass={tiny5.className} />
       <div className="w-full">
         <Header />
-        <main className="">{children}</main>
+        <main>
+          <SidebarTriggerWrapper />
+          {children}
+        </main>
       </div>
     </SidebarProvider>
   );

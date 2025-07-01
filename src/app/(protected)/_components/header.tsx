@@ -23,10 +23,13 @@ import { useWallet } from "@/context/wallet-context";
 import { AddWalletModal } from "./add-wallet-modal";
 import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
-import { SidebarTrigger } from "@/components/ui/sidebar";
+import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import Image from "next/image";
 
 const Header = () => {
   const pathname = usePathname();
+
+  const { isMobile } = useSidebar();
 
   const { walletAddress, setWalletAddress, allWallets } = useWallet();
 
@@ -45,7 +48,11 @@ const Header = () => {
   return (
     <header className="bg-brand-indigo flex w-full items-center justify-between gap-2 border-b p-4">
       <div className="flex items-center gap-3">
-        <SidebarTrigger />
+        {isMobile ? (
+          <Image src="/logo.svg" alt="Logo" width={22} height={22} />
+        ) : (
+          <SidebarTrigger />
+        )}
 
         {!["/favorites", "/upgrade"].includes(pathname) && (
           <div className="flex items-center gap-2">
