@@ -1,9 +1,6 @@
-/** @type {import('next').NextConfig} */
+import type { NextConfig } from "next";
 
-// Verifica se está rodando no Mac
-const isMac = process.platform === "darwin";
-
-const nextConfig = {
+const nextConfig: NextConfig = {
   images: {
     remotePatterns: [
       {
@@ -11,10 +8,6 @@ const nextConfig = {
         hostname: "**",
       },
     ],
-  },
-  experimental: {
-    // Desativa o LightningCSS só no Mac
-    optimizeCss: !isMac,
   },
 };
 
