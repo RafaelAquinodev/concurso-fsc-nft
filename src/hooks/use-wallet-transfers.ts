@@ -73,8 +73,6 @@ export const useWalletTransfers = ({
           },
         }));
 
-        console.log("Transferências encontradas:", resolvedTransfers);
-
         if (loadMore) {
           setTransfers((prev) => [...prev, ...resolvedTransfers]);
         } else {
