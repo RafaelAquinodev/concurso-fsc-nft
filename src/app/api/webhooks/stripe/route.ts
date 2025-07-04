@@ -37,6 +37,7 @@ export const POST = async (request: Request) => {
       case "invoice.payment_succeeded": {
         const invoice = event.data.object as Stripe.Invoice;
 
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         const subscriptionId = (invoice as any).parent?.subscription_details
           ?.subscription;
         const customer = invoice.customer as string;
@@ -112,7 +113,7 @@ export const POST = async (request: Request) => {
 
     return NextResponse.json({ received: true });
   } catch (err) {
-    // console.error("Stripe webhook error:", err);
+    console.error("Stripe webhook error:", err);
     return new NextResponse("Webhook error", { status: 500 });
   }
 };
