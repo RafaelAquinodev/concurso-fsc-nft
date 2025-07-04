@@ -8,6 +8,9 @@
     "start": "next start",
     "lint": "next lint"
   },
+  "engines": {
+    "node": ">=22.14.0"
+  },
   "overrides": {
     "react-is": "^19.0.0-rc-69d4b800-20241021"
   },
