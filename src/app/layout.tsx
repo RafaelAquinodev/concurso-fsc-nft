@@ -27,15 +27,15 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <ClerkProvider>
+    <ClerkProvider>
+      <html lang="en">
         <body
           className={`${geistSans.variable} ${geistMono.variable} dark bg-secondary antialiased`}
         >
           <WalletProvider>{children}</WalletProvider>
           <Toaster />
         </body>
-      </ClerkProvider>
-    </html>
+      </html>
+    </ClerkProvider>
   );
 }
