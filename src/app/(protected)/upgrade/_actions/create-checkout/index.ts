@@ -26,8 +26,8 @@ export const createCheckout = async () => {
     payment_method_types: ["card"],
     mode: "subscription",
     customer: customer.id,
-    success_url: "http://localhost:3000",
-    cancel_url: "http://localhost:3000",
+    success_url: "https://metrics-nfts.vercel.app/dashboard",
+    cancel_url: "https://metrics-nfts.vercel.app/upgrade",
     line_items: [
       {
         price: process.env.STRIPE_PREMIUM_PLAN_PRICE_ID,
