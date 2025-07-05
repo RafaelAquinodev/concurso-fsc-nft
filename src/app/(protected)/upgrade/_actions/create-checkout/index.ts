@@ -19,13 +19,6 @@ export const createCheckout = async () => {
     apiVersion: "2025-02-24.acacia",
   });
 
-  // Cria um customer com o clerk_user_id no metadata
-  const customer = await stripe.customers.create({
-    metadata: {
-      clerk_user_id: userId,
-    },
-  });
-
   const session = await stripe.checkout.sessions.create({
     payment_method_types: ["card"],
     mode: "subscription",
