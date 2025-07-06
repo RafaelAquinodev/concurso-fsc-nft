@@ -47,7 +47,7 @@ const items = [
     icon: Palette,
   },
   {
-    title: "Transaçoes",
+    title: "Transações",
     url: "/transactions",
     icon: ArrowRightLeft,
   },

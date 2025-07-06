@@ -6,17 +6,25 @@ import { loadStripe } from "@stripe/stripe-js";
 
 const AcquirePlanButton = () => {
   const handleAcquirePlanClick = async () => {
-    const { sessionId } = await createCheckout();
-    if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
-      throw new Error("Stripe publishable key not found");
+    try {
+      const { sessionId } = await createCheckout();
+
+      if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+        throw new Error("Stripe publishable key not found");
+      }
+
+      const stripe = await loadStripe(
+        process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
+      );
+
+      if (!stripe) {
+        throw new Error("Stripe not found");
+      }
+
+      await stripe.redirectToCheckout({ sessionId });
+    } catch (error) {
+      console.error("Erro no checkout:", error);
     }
-    const stripe = await loadStripe(
-      process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY,
-    );
-    if (!stripe) {
-      throw new Error("Stripe not found");
-    }
-    await stripe.redirectToCheckout({ sessionId });
   };
 
   const { user } = useUser();

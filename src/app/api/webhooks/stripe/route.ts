@@ -17,7 +17,7 @@ export const POST = async (request: Request) => {
 
     const text = await request.text();
     const stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
-      apiVersion: "2024-10-28.acacia",
+      apiVersion: "2025-02-24.acacia",
     });
 
     const event = stripe.webhooks.constructEvent(
@@ -25,69 +25,86 @@ export const POST = async (request: Request) => {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET,
     );
-    // console.log("Evento recebido do Stripe:", JSON.stringify(event, null, 2));
-    // console.log(
-    //   "Objeto do evento:",
-    //   JSON.stringify(event.data.object, null, 2),
-    // );
 
     const clerk = await clerkClient();
 
     switch (event.type) {
-      case "invoice.payment_succeeded": {
-        const invoice = event.data.object as Stripe.Invoice;
+      // Evento para primeira cobrança
+      case "checkout.session.completed": {
+        const session = event.data.object as Stripe.Checkout.Session;
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const subscriptionId = (invoice as any).parent?.subscription_details
-          ?.subscription;
-        const customer = invoice.customer as string;
+        if (session.mode === "subscription") {
+          const subscriptionId = session.subscription as string;
+          const customerId = session.customer as string;
 
-        // console.log(
-        //   "[invoice.payment_succeeded] Subscription ID:",
-        //   subscriptionId,
-        // );
-        // console.log("[invoice.payment_succeeded] Customer ID:", customer);
+          if (!subscriptionId) {
+            console.error("Missing subscription ID in checkout session");
+            return NextResponse.error();
+          }
 
-        if (!subscriptionId) {
-          console.error("Missing subscription ID");
-          return NextResponse.error();
+          const subscription =
+            await stripe.subscriptions.retrieve(subscriptionId);
+          const clerkUserId = subscription.metadata?.clerk_user_id;
+
+          if (!clerkUserId) {
+            console.error("Missing clerk_user_id in subscription metadata");
+            return NextResponse.error();
+          }
+
+          await clerk.users.updateUser(clerkUserId, {
+            privateMetadata: {
+              stripeCustomerId: customerId,
+              stripeSubscriptionId: subscriptionId,
+            },
+            publicMetadata: {
+              subscriptionPlan: "premium",
+            },
+          });
         }
-
-        const subscription =
-          await stripe.subscriptions.retrieve(subscriptionId);
-        const clerkUserId = subscription.metadata?.clerk_user_id;
-
-        // console.log("[invoice.payment_succeeded] Clerk User ID:", clerkUserId);
-
-        if (!clerkUserId) {
-          console.error("Missing clerk_user_id in subscription metadata");
-          return NextResponse.error();
-        }
-
-        await clerk.users.updateUser(clerkUserId, {
-          privateMetadata: {
-            stripeCustomerId: customer,
-            stripeSubscriptionId: subscriptionId,
-          },
-          publicMetadata: {
-            subscriptionPlan: "premium",
-          },
-        });
-
-        // console.log("[invoice.payment_succeeded] User updated successfully.");
         break;
       }
 
-      case "customer.subscription.deleted": {
-        const subscription = await stripe.subscriptions.retrieve(
-          event.data.object.id,
-        );
-        const clerkUserId = subscription.metadata?.clerk_user_id;
+      // Evento para cobranças recorrentes
+      case "invoice.payment_succeeded": {
+        const invoice = event.data.object as Stripe.Invoice;
 
-        // console.log(
-        //   "[customer.subscription.deleted] Clerk User ID:",
-        //   clerkUserId,
-        // );
+        // Verifica se é uma cobrança recorrente
+        if (invoice.billing_reason === "subscription_cycle") {
+          const subscriptionId = invoice.subscription as string;
+          const customerId = invoice.customer as string;
+
+          if (!subscriptionId) {
+            console.error("Missing subscription ID in invoice");
+            return NextResponse.error();
+          }
+
+          const subscription =
+            await stripe.subscriptions.retrieve(subscriptionId);
+          const clerkUserId = subscription.metadata?.clerk_user_id;
+
+          if (!clerkUserId) {
+            console.error("Missing clerk_user_id in subscription metadata");
+            return NextResponse.error();
+          }
+
+          // Garantir que o usuário ainda está premium
+          await clerk.users.updateUser(clerkUserId, {
+            privateMetadata: {
+              stripeCustomerId: customerId,
+              stripeSubscriptionId: subscriptionId,
+            },
+            publicMetadata: {
+              subscriptionPlan: "premium",
+            },
+          });
+        }
+        break;
+      }
+
+      // Cancelamento da subscription - TODO - Painel para gerenciar cancelamentos
+      case "customer.subscription.deleted": {
+        const subscription = event.data.object as Stripe.Subscription;
+        const clerkUserId = subscription.metadata?.clerk_user_id;
 
         if (!clerkUserId) {
           console.error("Missing clerk_user_id on subscription deletion");
@@ -104,9 +121,6 @@ export const POST = async (request: Request) => {
           },
         });
 
-        // console.log(
-        //   "[customer.subscription.deleted] User subscription removed.",
-        // );
         break;
       }
     }
