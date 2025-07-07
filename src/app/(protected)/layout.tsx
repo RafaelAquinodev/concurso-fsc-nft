@@ -26,9 +26,9 @@ export default function Layout({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider defaultOpen={true}>
       <AppSidebar fontClass={tiny5.className} />
-      <div className="w-full">
+      <div className="flex w-full flex-col">
         <Header />
-        <main>
+        <main className="flex-1">
           <SidebarTriggerWrapper />
           {children}
         </main>

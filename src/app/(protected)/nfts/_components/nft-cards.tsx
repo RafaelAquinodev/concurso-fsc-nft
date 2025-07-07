@@ -18,10 +18,10 @@ const NftCards = () => {
   const { addFavorite, removeFavorite, favorites } = useFavoriteNFTs();
 
   return (
-    <div className="min-h-full w-full">
+    <div className="h-full min-h-full w-full">
       {/* Loading */}
       {loading && (
-        <div className="mx-auto flex min-h-screen w-full items-center justify-center">
+        <div className="mx-auto flex min-h-full w-full items-center justify-center">
           <div className="mx-auto flex items-center justify-center p-12">
             <div className="text-center">
               <div className="border-brand-purple mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2"></div>
@@ -33,7 +33,7 @@ const NftCards = () => {
 
       {/* Error */}
       {error && (
-        <div className="mx-auto flex min-h-screen w-full items-center justify-center">
+        <div className="mx-auto flex min-h-full w-full items-center justify-center">
           <div className="bg-brand-accent-muted mb-8 rounded-xl border border-red-200 p-6">
             <div className="flex items-center">
               <div className="mr-3 text-red-500">⚠️</div>
@@ -56,7 +56,7 @@ const NftCards = () => {
       {/* Grid de NFTs */}
       {nfts.length > 0 && (
         <>
-          <div className="mb-8 grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
+          <div className="mb-8 grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6 max-[550px]:justify-center">
             {nfts.map((nft) => (
               <NftCard
                 key={`${nft.token_address}-${nft.token_id}`}

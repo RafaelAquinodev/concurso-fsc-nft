@@ -8,10 +8,10 @@ const FavoriteNftCards = () => {
   const { nfts, loading, error, favorites, removeFavorite } = useFavoriteNFTs();
 
   return (
-    <div className="min-h-full w-full">
+    <div className="h-full min-h-full w-full">
       {/* Loading */}
       {loading && nfts.length === 0 && (
-        <div className="mx-auto flex min-h-screen w-full items-center justify-center">
+        <div className="mx-auto flex min-h-full w-full items-center justify-center">
           <div className="mx-auto flex items-center justify-center p-12">
             <div className="text-center">
               <div className="mx-auto mb-4 h-12 w-12 animate-spin rounded-full border-b-2 border-purple-600"></div>
@@ -23,7 +23,7 @@ const FavoriteNftCards = () => {
 
       {/* Error */}
       {error && (
-        <div className="mx-auto flex min-h-screen w-full items-center justify-center">
+        <div className="mx-auto flex min-h-full w-full items-center justify-center">
           <div className="bg-brand-indigo mb-8 rounded-xl border border-red-200 p-6">
             <div className="flex items-center">
               <div className="mr-3 text-red-200">⚠️</div>
@@ -31,7 +31,6 @@ const FavoriteNftCards = () => {
                 <h3 className="font-semibold text-white">
                   Erro ao carregar NFTs
                 </h3>
-                <p className="mt-1 text-sm text-gray-400">{error}</p>
               </div>
             </div>
           </div>
@@ -39,8 +38,8 @@ const FavoriteNftCards = () => {
       )}
 
       {/* Sem NFTs favoritos ainda */}
-      {favorites.length === 0 && !loading && !error && (
-        <div className="mx-auto flex min-h-screen w-full items-center justify-center">
+      {!loading && !error && favorites.length === 0 && (
+        <div className="mx-auto flex min-h-full w-full items-center justify-center">
           <div className="bg-brand-indigo mb-8 rounded-xl border border-gray-200 p-6">
             <div className="text-center">
               <h3 className="mb-2 text-lg font-semibold text-gray-100">

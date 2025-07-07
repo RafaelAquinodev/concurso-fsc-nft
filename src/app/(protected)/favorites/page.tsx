@@ -17,9 +17,7 @@ const FavoritesPage = async () => {
 
   return (
     <PageContainer>
-      <div className="flex flex-wrap gap-8">
-        <FavoriteNftCards />
-      </div>
+      <FavoriteNftCards />
     </PageContainer>
   );
 };

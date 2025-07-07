@@ -138,9 +138,15 @@ export function AppSidebar({ fontClass }: Props) {
                       </SidebarMenuButton>
                     </SidebarMenuItem>
                   </TooltipTrigger>
-                  <TooltipContent side="right">
-                    <p className="">Disponível apenas no plano Premium</p>
-                  </TooltipContent>
+                  {openMobile ? (
+                    <TooltipContent side="bottom">
+                      <p className="">Disponível apenas no plano Premium</p>
+                    </TooltipContent>
+                  ) : (
+                    <TooltipContent side="right">
+                      <p className="">Disponível apenas no plano Premium</p>
+                    </TooltipContent>
+                  )}
                 </Tooltip>
               </SidebarMenu>
             )}
