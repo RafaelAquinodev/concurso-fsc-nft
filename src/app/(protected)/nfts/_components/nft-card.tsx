@@ -62,7 +62,7 @@ const NftCard: React.FC<NftCardProps> = ({
   const premiumPlan = user?.publicMetadata.subscriptionPlan === "premium";
 
   return (
-    <div className="overflow-hidden rounded-xl bg-neutral-900 shadow-[0_5px_0_0_#6934ab] transition-all duration-300 hover:scale-102 hover:shadow-[0_0px_5px_0_#6934ab]">
+    <div className="overflow-hidden rounded-xl bg-neutral-900 shadow-[0_5px_0_0_#6934ab] transition-all duration-300 hover:scale-102 hover:shadow-[0_0px_5px_0_#6934ab] max-[550px]:mx-auto max-[550px]:max-w-[280px]">
       {/* Imagem do NFT */}
       <div className="bg-brand-indigo relative h-64">
         {nft.resolvedImageUrl && !imageError ? (
@@ -90,7 +90,7 @@ const NftCard: React.FC<NftCardProps> = ({
           </>
         ) : (
           // Se a imagem não carregar, mostra svg
-          <div className="flex h-full w-full items-center justify-center">
+          <div className="flex h-full w-full min-w-[240px] items-center justify-center">
             <div className="text-center">
               <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-lg bg-gray-400">
                 <svg

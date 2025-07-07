@@ -13,7 +13,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
-import { PlusIcon, TrashIcon, WalletIcon } from "lucide-react";
+import { PlusIcon, TrashIcon, WalletIcon, Crown } from "lucide-react";
 import { toast } from "sonner";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -29,6 +29,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { useUser } from "@clerk/nextjs";
+import Link from "next/link";
 
 interface AddWalletModalProps {
   children?: React.ReactNode;
@@ -43,7 +45,15 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const { addCustomWallet, customWallets, removeCustomWallet } = useWallet();
+  const { user } = useUser();
+  const {
+    addCustomWallet,
+    customWallets,
+    removeCustomWallet,
+    canAddMoreWallets,
+  } = useWallet();
+
+  const premiumPlan = user?.publicMetadata.subscriptionPlan === "premium";
 
   const customWallet = customWallets.filter((wallet) => {
     return (
@@ -68,35 +78,33 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
     e.preventDefault();
 
     if (!formData.address.trim() || !formData.name.trim()) {
-      toast("Endereço e nome são obrigatórios");
+      toast.error("Endereço e nome são obrigatórios");
       return;
     }
 
     if (!validateAddress(formData.address.trim())) {
-      toast("Endereço inválido. Use um endereço Ethereum válido (0x...)");
+      toast.error("Endereço inválido. Use um endereço Ethereum válido (0x...)");
       return;
     }
 
     setIsSubmitting(true);
 
     try {
-      const success = addCustomWallet({
+      const result = addCustomWallet({
         address: formData.address.trim(),
         name: formData.name.trim(),
         description: formData.description.trim() || formData.name.trim(),
       });
 
-      if (success) {
-        toast("Carteira adicionada com sucesso");
+      if (result.success) {
+        toast.success("Carteira adicionada com sucesso");
         setFormData({ address: "", name: "", description: "" });
       } else {
-        toast("Este endereço já existe na lista");
+        toast.error(result.error || "Erro ao adicionar carteira");
       }
     } catch (error) {
-      toast(
-        "Erro ao adicionar carteira",
-        (error && error) || "Erro desconhecido",
-      );
+      console.error("Erro ao adicionar carteira:", error);
+      toast.error("Erro ao adicionar carteira");
     } finally {
       setIsSubmitting(false);
     }
@@ -105,12 +113,10 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
   const handleRemoveWallet = (address: string) => {
     try {
       removeCustomWallet(address);
-      toast("Carteira removida com sucesso");
+      toast.success("Carteira removida com sucesso");
     } catch (error) {
-      toast(
-        "Erro ao remover carteira",
-        (error && error) || "Erro desconhecido",
-      );
+      console.error("Erro ao remover carteira:", error);
+      toast.error("Erro ao remover carteira");
     }
   };
 
@@ -137,7 +143,7 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="h-full max-h-[80vh] overflow-y-auto sm:max-w-[600px]">
+      <DialogContent className="h-full max-h-[80vh] overflow-y-auto p-4 sm:max-w-[600px] sm:p-6">
         <DialogHeader>
           <DialogTitle>Gerenciar Carteiras</DialogTitle>
           <DialogDescription>
@@ -151,6 +157,27 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
             <PlusIcon size={16} />
             Adicionar nova carteira
           </h3>
+
+          {/* Aviso de limite Basic */}
+          {!premiumPlan && !canAddMoreWallets && (
+            <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3">
+              <div className="flex items-center gap-2 text-amber-800">
+                <Crown size={16} />
+                <span className="text-sm font-medium">
+                  Limite do Plano Basic atingido
+                </span>
+              </div>
+              <p className="mt-1 text-sm text-amber-700">
+                Você atingiu o limite de 2 carteiras monitoradas. Faça upgrade
+                para o{" "}
+                <Link href="/upgrade" className="underline">
+                  Plano Premium
+                </Link>{" "}
+                para adicionar carteiras ilimitadas.
+              </p>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit}>
             <div className="grid gap-4">
               <div className="grid grid-cols-4 items-center gap-4">
@@ -164,6 +191,7 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
                   onChange={(e) => handleInputChange("address", e.target.value)}
                   className="col-span-3"
                   required
+                  disabled={!canAddMoreWallets}
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
@@ -177,6 +205,7 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
                   onChange={(e) => handleInputChange("name", e.target.value)}
                   className="col-span-3"
                   required
+                  disabled={!canAddMoreWallets}
                 />
               </div>
               <div className="grid grid-cols-4 items-center gap-4">
@@ -192,11 +221,15 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
                   }
                   className="col-span-3"
                   rows={3}
+                  disabled={!canAddMoreWallets}
                 />
               </div>
             </div>
             <div className="mt-4 flex justify-end gap-2">
-              <Button type="submit" disabled={isSubmitting}>
+              <Button
+                type="submit"
+                disabled={isSubmitting || !canAddMoreWallets}
+              >
                 {isSubmitting ? "Adicionando..." : "Adicionar"}
               </Button>
             </div>
@@ -204,12 +237,13 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
         </div>
         <Separator className="mt-4" />
 
-        {/* Lista de Carteiras Customizadas */}
+        {/* Lista de Carteiras Próprias */}
         {customWallet && customWallet.length > 0 && (
           <div className="py-">
             <h3 className="mb-3 flex items-center gap-2 text-sm font-medium">
               <WalletIcon size={16} />
-              Suas carteiras ({customWallet.length})
+              Suas carteiras ({customWallet.length}
+              {!premiumPlan && "/2"})
             </h3>
             <div className="max-h-64 space-y-2 overflow-y-auto">
               {customWallet.map((wallet) => (

@@ -74,16 +74,18 @@ const Header = () => {
                             </div>
                           </SelectItem>
                         </TooltipTrigger>
-                        <TooltipContent side="right">
-                          <div className="space-y-1">
-                            <div className="text-sm text-gray-500">
-                              {wallet.description}
+                        {isMobile ? null : (
+                          <TooltipContent side="right">
+                            <div className="space-y-1">
+                              <div className="text-sm text-gray-500">
+                                {wallet.description}
+                              </div>
+                              <div className="hidden font-mono text-xs text-gray-400 md:block">
+                                {wallet.address}
+                              </div>
                             </div>
-                            <div className="hidden font-mono text-xs text-gray-400 md:block">
-                              {wallet.address}
-                            </div>
-                          </div>
-                        </TooltipContent>
+                          </TooltipContent>
+                        )}
                       </Tooltip>
                     ))}
                   </SelectGroup>
@@ -99,16 +101,18 @@ const Header = () => {
                           {wallet.name}
                         </SelectItem>
                       </TooltipTrigger>
-                      <TooltipContent side="right">
-                        <div className="space-y-1">
-                          <div className="text-sm text-gray-500">
-                            {wallet.description}
+                      {isMobile ? null : (
+                        <TooltipContent side="right">
+                          <div className="space-y-1">
+                            <div className="text-sm text-gray-500">
+                              {wallet.description}
+                            </div>
+                            <div className="hidden font-mono text-xs text-gray-400 md:block">
+                              {wallet.address}
+                            </div>
                           </div>
-                          <div className="hidden font-mono text-xs text-gray-400 md:block">
-                            {wallet.address}
-                          </div>
-                        </div>
-                      </TooltipContent>
+                        </TooltipContent>
+                      )}
                     </Tooltip>
                   ))}
                 </SelectGroup>
