@@ -4,9 +4,7 @@ import NftCards from "./_components/nft-cards";
 const NftsPage = () => {
   return (
     <PageContainer>
-      <div className="flex flex-wrap gap-8">
-        <NftCards />
-      </div>
+      <NftCards />
     </PageContainer>
   );
 };
