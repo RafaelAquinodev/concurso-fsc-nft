@@ -22,10 +22,12 @@ export type WalletContextType = {
   setWalletAddress: (address: string) => void;
   allWallets: Wallet[];
   customWallets: Wallet[];
-  addCustomWallet: (
-    wallet: Omit<Wallet, "address"> & { address: string },
-  ) => boolean;
+  addCustomWallet: (wallet: Omit<Wallet, "address"> & { address: string }) => {
+    success: boolean;
+    error?: string;
+  };
   removeCustomWallet: (address: string) => void;
+  canAddMoreWallets: boolean;
 };
 
 const WalletContext = createContext<WalletContextType | undefined>(undefined);
@@ -37,6 +39,12 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
     walletCatalog[0].address,
   );
   const [customWallets, setCustomWallets] = useState<Wallet[]>([]);
+
+  const premiumPlan = user?.publicMetadata.subscriptionPlan === "premium";
+
+  const maxCustomWallets = premiumPlan ? Infinity : 2;
+
+  const canAddMoreWallets = customWallets.length < maxCustomWallets;
 
   const allWallets = useMemo(
     () => [...walletCatalog, ...customWallets],
@@ -68,13 +76,19 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
       const parsedCustomWallets = savedCustomWallets
         ? JSON.parse(savedCustomWallets)
         : [];
-      setCustomWallets(parsedCustomWallets);
+
+      // Limita o número de carteiras para 2 se o usuário não tiver mais o plano premium
+      const limitedCustomWallets = premiumPlan
+        ? parsedCustomWallets
+        : parsedCustomWallets.slice(0, 2);
+
+      setCustomWallets(limitedCustomWallets);
 
       const savedAddress = localStorage.getItem(walletKey);
       if (savedAddress) {
         const addressExists =
           walletCatalog.some((wallet) => wallet.address === savedAddress) ||
-          parsedCustomWallets.some(
+          limitedCustomWallets.some(
             (wallet: Wallet) => wallet.address === savedAddress,
           );
 
@@ -89,7 +103,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
       setCustomWallets([]);
       setWalletAddressState(walletCatalog[0].address);
     }
-  }, [getWalletKey, getCustomWalletsKey]);
+  }, [getWalletKey, getCustomWalletsKey, premiumPlan]);
 
   const saveCustomWallets = useCallback(
     (walletsToSave: Wallet[]) => {
@@ -135,9 +149,20 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   );
 
   const addCustomWallet = useCallback(
-    (wallet: Omit<Wallet, "address"> & { address: string }): boolean => {
+    (
+      wallet: Omit<Wallet, "address"> & { address: string },
+    ): { success: boolean; error?: string } => {
       if (allWallets.some((w) => w.address === wallet.address)) {
-        return false;
+        return { success: false, error: "Esta carteira já foi adicionada" };
+      }
+
+      if (!canAddMoreWallets) {
+        return {
+          success: false,
+          error: premiumPlan
+            ? "Limite de carteiras atingido"
+            : "Limite do Plano Basic atingido (2 carteiras). Faça upgrade para adicionar mais carteiras.",
+        };
       }
 
       const newWallet: Wallet = {
@@ -150,9 +175,15 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
       setCustomWallets(updatedCustomWallets);
       saveCustomWallets(updatedCustomWallets);
 
-      return true;
+      return { success: true };
     },
-    [allWallets, customWallets, saveCustomWallets],
+    [
+      allWallets,
+      customWallets,
+      saveCustomWallets,
+      canAddMoreWallets,
+      premiumPlan,
+    ],
   );
 
   const removeCustomWallet = useCallback(
@@ -183,6 +214,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
         customWallets,
         addCustomWallet,
         removeCustomWallet,
+        canAddMoreWallets,
       }}
     >
       {children}
