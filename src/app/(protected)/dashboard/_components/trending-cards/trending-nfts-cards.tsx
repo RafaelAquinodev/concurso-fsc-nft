@@ -3,6 +3,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { TrendingUp } from "lucide-react";
 import TrendingNftCard from "./trending-nfts-card";
+import CollectionModal from "./collection-modal";
 import { TrendingCollection } from "@/hooks/use-trending-nfts";
 
 type TrendingNFTsCardsProps = {
@@ -19,6 +20,9 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [maxCards, setMaxCards] = useState(MAX_CARDS_LIMIT);
+  const [selectedCollection, setSelectedCollection] =
+    useState<TrendingCollection | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const GAP = 16;
 
@@ -47,6 +51,19 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
       setMaxCards(newMaxCards);
     }
   }, [calculateMaxCards, maxCards]);
+
+  const handleCollectionClick = useCallback(
+    (collection: TrendingCollection) => {
+      setSelectedCollection(collection);
+      setIsModalOpen(true);
+    },
+    [],
+  );
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setSelectedCollection(null);
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -128,11 +145,18 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
       <div className="mx-auto flex justify-center gap-4">
         {collections.slice(0, maxCards).map((collection, index) => (
           <TrendingNftCard
-            key={`${collection.collection_id}-${index}`}
+            key={`${collection.collection_address}-${index}`}
             collection={collection}
+            onClick={handleCollectionClick}
           />
         ))}
       </div>
+
+      <CollectionModal
+        collection={selectedCollection}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };
