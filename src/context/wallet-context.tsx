@@ -35,9 +35,7 @@ const WalletContext = createContext<WalletContextType | undefined>(undefined);
 export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoaded } = useUser();
 
-  const [walletAddress, setWalletAddressState] = useState(
-    walletCatalog[0].address,
-  );
+  const [walletAddress, setWalletAddressState] = useState("");
   const [customWallets, setCustomWallets] = useState<Wallet[]>([]);
 
   const premiumPlan = user?.publicMetadata.subscriptionPlan === "premium";
@@ -77,7 +75,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
         ? JSON.parse(savedCustomWallets)
         : [];
 
-      // Limita o número de carteiras para 2 se o usuário não tiver mais o plano premium
+      // Limita o número de carteiras para 2 se o usuário não tiver mais o plano premium
       const limitedCustomWallets = premiumPlan
         ? parsedCustomWallets
         : parsedCustomWallets.slice(0, 2);
@@ -97,6 +95,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
         } else {
           setWalletAddressState(walletCatalog[0].address);
         }
+      } else {
+        setWalletAddressState(walletCatalog[0].address);
       }
     } catch (error) {
       console.error("Erro ao carregar dados das carteiras:", error);
