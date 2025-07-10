@@ -71,7 +71,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
                 alt={collection.collection_title}
                 width={700}
                 height={200}
-                className="mt-6 rounded-lg object-cover sm:mt-3"
+                className="mt-6 rounded-lg border object-cover sm:mt-3"
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
                 }}
