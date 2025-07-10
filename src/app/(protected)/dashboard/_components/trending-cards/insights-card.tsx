@@ -3,6 +3,9 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useInsights } from "@/hooks/use-insights";
+import { useUser } from "@clerk/nextjs";
+import { Crown } from "lucide-react";
+import Link from "next/link";
 
 interface InsightsCardProps {
   collection: string;
@@ -10,6 +13,9 @@ interface InsightsCardProps {
 
 const InsightsCard = ({ collection }: InsightsCardProps) => {
   const { insight, loading, error } = useInsights(collection);
+
+  const { user } = useUser();
+  const premiumPlan = user?.publicMetadata.subscriptionPlan === "premium";
 
   if (loading) {
     return (
@@ -50,25 +56,48 @@ const InsightsCard = ({ collection }: InsightsCardProps) => {
 
   return (
     <Card className="rounded-xl py-4">
-      <CardContent className="space-y-3 px-4">
-        <div className="text-sm leading-relaxed text-gray-200">
-          {insight.insight}
-        </div>
-        <div className="flex items-center justify-between gap-2">
-          <span className="text-xs text-gray-400">
-            Gerado em:{" "}
-            {new Date(insight.generatedAt).toLocaleString("pt-BR", {
-              hour: "2-digit",
-              minute: "2-digit",
-              day: "2-digit",
-              month: "2-digit",
-              year: "numeric",
-            })}
-          </span>
+      {premiumPlan ? (
+        <CardContent className="space-y-3 px-4">
+          <div className="text-sm leading-relaxed text-gray-200">
+            {insight.insight}
+          </div>
+          <div className="flex items-center justify-between gap-2">
+            <span className="text-xs text-gray-400">
+              Gerado em:{" "}
+              {new Date(insight.generatedAt).toLocaleString("pt-BR", {
+                hour: "2-digit",
+                minute: "2-digit",
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              })}
+            </span>
 
-          <span className="text-xs text-gray-400">Insight gerado por IA</span>
-        </div>
-      </CardContent>
+            <span className="text-xs text-gray-400">Insight gerado por IA</span>
+          </div>
+        </CardContent>
+      ) : (
+        <CardContent className="space-y-3 px-4">
+          <div className="flex items-center gap-2 text-gray-200">
+            <Crown size={16} />
+            <span className="text-sm font-medium">
+              Upgrade para o Plano Premium
+            </span>
+          </div>
+          <div>
+            <p className="text-sm text-gray-300">
+              Receba insights diários sobre as coleções.
+            </p>
+            <p className="text-sm text-gray-300">
+              Ative o{" "}
+              <Link href="/upgrade" className="gradient-underline text-white">
+                Plano Premium
+              </Link>{" "}
+              para obter um resumo do mercardo para cada coleção utilizando IA.
+            </p>
+          </div>
+        </CardContent>
+      )}
     </Card>
   );
 };
