@@ -46,14 +46,14 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { user } = useUser();
+  const premiumPlan = user?.publicMetadata.subscriptionPlan === "premium";
+
   const {
     addCustomWallet,
     customWallets,
     removeCustomWallet,
     canAddMoreWallets,
   } = useWallet();
-
-  const premiumPlan = user?.publicMetadata.subscriptionPlan === "premium";
 
   const customWallet = customWallets.filter((wallet) => {
     return (
@@ -143,7 +143,7 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="max-h-[90vh] overflow-y-auto p-4 sm:max-w-[600px] sm:p-6">
+      <DialogContent className="bg-secondary max-h-[90vh] overflow-y-auto p-4 sm:max-w-[600px] sm:p-6">
         <DialogHeader>
           <DialogTitle>Gerenciar Carteiras</DialogTitle>
           <DialogDescription>
@@ -160,21 +160,28 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
 
           {/* Aviso de limite Basic */}
           {!premiumPlan && !canAddMoreWallets && (
-            <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3">
-              <div className="flex items-center gap-2 text-amber-800">
+            <div className="bg-brand-indigo mb-4 rounded-lg border p-3">
+              <div className="flex items-center gap-2 text-gray-300">
                 <Crown size={16} />
                 <span className="text-sm font-medium">
-                  Limite do Plano Basic atingido
+                  Upgrade para o Plano Premium
                 </span>
               </div>
-              <p className="mt-1 text-sm text-amber-700">
-                Você atingiu o limite de 2 carteiras monitoradas. Faça upgrade
-                para o{" "}
-                <Link href="/upgrade" className="underline">
-                  Plano Premium
-                </Link>{" "}
-                para adicionar carteiras ilimitadas.
-              </p>
+              <div>
+                <p className="mt-1 text-sm text-gray-300">
+                  Você atingiu o limite de 2 carteiras monitoradas.
+                </p>
+                <p className="text-sm text-gray-300">
+                  Faça upgrade para o{" "}
+                  <Link
+                    href="/upgrade"
+                    className="gradient-underline text-white"
+                  >
+                    Plano Premium
+                  </Link>{" "}
+                  para adicionar carteiras ilimitadas.
+                </p>
+              </div>
             </div>
           )}
 
