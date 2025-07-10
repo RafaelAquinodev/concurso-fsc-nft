@@ -1,54 +1,75 @@
 "use client";
 
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { useInsights } from "@/hooks/use-insights";
-import { useEffect, useState } from "react";
 
-const InsightsCard = () => {
-  const { insights, getInsight, loading } = useInsights();
-  const [collections] = useState([
-    "Azuki",
-    "Bored Ape Yacht Club",
-    "CryptoPunks",
-  ]);
+interface InsightsCardProps {
+  collection: string;
+}
 
-  useEffect(() => {
-    // Gera insights para cada coleção
-    collections.forEach((collection) => {
-      getInsight(collection);
-    });
-  }, []);
+const InsightsCard = ({ collection }: InsightsCardProps) => {
+  const { insight, loading, error } = useInsights(collection);
+
+  if (loading) {
+    return (
+      <Card className="rounded-xl">
+        <CardContent className="px-4">
+          <Skeleton className="mb-2 h-4 w-full" />
+          <Skeleton className="h-4 w-3/4" />
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (error) {
+    return (
+      <Card className="rounded-xl">
+        <CardContent className="px-4">
+          <div className="mb-3 flex items-center gap-2">
+            <div className="text-lg">❌</div>
+            <div className="text-sm font-medium text-red-400">
+              Erro nos Insights
+            </div>
+          </div>
+          <div className="text-sm text-red-300">{error}</div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  if (!insight) {
+    return (
+      <Card className="rounded-xl">
+        <CardContent className="px-4">
+          <div className="text-sm text-gray-400">Nenhum insight disponível</div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
-    <div className="p-6">
-      <h1 className="mb-6 text-2xl font-bold">NFT Dashboard</h1>
-
-      {collections.map((collection) => (
-        <div key={collection} className="mb-4 rounded-lg border p-4">
-          <h3 className="text-lg font-semibold">{collection}</h3>
-
-          {loading[collection] ? (
-            <div className="mt-2 text-gray-500">
-              🤖 Gerando insights de IA...
-            </div>
-          ) : insights[collection] ? (
-            <div className="mt-2 rounded bg-blue-50 p-3">
-              <div className="text-sm font-medium text-blue-800">
-                AI Insights:
-              </div>
-              <div className="text-blue-700">
-                {insights[collection].insight}
-              </div>
-              <div className="mt-1 text-xs text-blue-600">
-                Gerado em:{" "}
-                {new Date(insights[collection].generatedAt).toLocaleString()}
-              </div>
-            </div>
-          ) : (
-            <div className="mt-2 text-gray-400">Nenhum insight disponível</div>
-          )}
+    <Card className="rounded-xl py-4">
+      <CardContent className="space-y-3 px-4">
+        <div className="text-sm leading-relaxed text-gray-200">
+          {insight.insight}
         </div>
-      ))}
-    </div>
+        <div className="flex items-center justify-between gap-2">
+          <span className="text-xs text-gray-400">
+            Gerado em:{" "}
+            {new Date(insight.generatedAt).toLocaleString("pt-BR", {
+              hour: "2-digit",
+              minute: "2-digit",
+              day: "2-digit",
+              month: "2-digit",
+              year: "numeric",
+            })}
+          </span>
+
+          <span className="text-xs text-gray-400">Insight gerado por IA</span>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
