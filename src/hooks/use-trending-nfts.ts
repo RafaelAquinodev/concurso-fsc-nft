@@ -1,13 +1,13 @@
 import { useState, useEffect, useCallback } from "react";
 
 export interface TrendingCollection {
-  collection_id: string;
+  collection_address: string;
   collection_title: string;
   collection_image: string;
+  collection_banner_image: string; // banner da coleção
   floor_price_usd: number;
   floor_price_native: number;
   floor_price_24hr_percent_change: number;
-  market_cap_usd: number;
   market_cap_native: number;
   volume_usd: number;
   volume_native: number;
@@ -66,6 +66,7 @@ export const useTrendingNFTs =
         }
 
         const data = await response.json();
+        console.log(data);
 
         setTrendingCollections(data);
       } catch (err) {
