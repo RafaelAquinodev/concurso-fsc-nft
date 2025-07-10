@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
@@ -14,6 +13,7 @@ import { TrendingCollection } from "@/hooks/use-trending-nfts";
 import { useCollectionNFTs } from "@/hooks/use-collection-nfts";
 import { formatUsd } from "@/utils/format-usd";
 import Image from "next/image";
+import InsightsCard from "../insights-card";
 
 interface CollectionModalProps {
   collection: TrendingCollection | null;
@@ -55,8 +55,11 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="bg-secondary max-h-[80vh] overflow-y-auto p-4 sm:max-w-[700px] sm:p-6">
-        <DialogHeader className="gap-3">
+      <DialogContent className="bg-secondary max-h-[90vh] overflow-y-auto p-4 sm:max-w-[700px] sm:p-6">
+        <DialogHeader
+          className="gap-3"
+          aria-describedby="Diálogo com um resumo sobre a coleção."
+        >
           <DialogTitle>
             {loading && (
               <Skeleton className="mt-6 h-24 w-full rounded-lg sm:mt-3 sm:h-44" />
@@ -75,7 +78,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
               />
             )}
           </DialogTitle>
-          <DialogDescription className="flex items-center gap-2">
+          <div className="flex items-center gap-2">
             {collection.collection_image && (
               <Image
                 src={collection.collection_image}
@@ -107,11 +110,11 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
                 </p>
               </div>
             </div>
-          </DialogDescription>
+          </div>
         </DialogHeader>
 
         <div>
-          <h3 className="mb-4 text-lg font-semibold text-white">
+          <h3 className="mb-3 text-lg font-semibold text-white">
             NFTs da Coleção
           </h3>
 
@@ -137,6 +140,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
             </div>
           )}
 
+          {/* Cards de NFTs */}
           {!loading && !error && nfts.length > 0 && (
             <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
               {nfts.map((nft) => (
@@ -145,7 +149,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
                   className="bg-brand-indigo rounded-xl p-0"
                 >
                   <CardContent className="p-2">
-                    <div className="aspect-square overflow-hidden rounded-lg bg-gray-700">
+                    <div className="overflow-hidden rounded-lg bg-gray-700">
                       {(nft.normalized_metadata?.image ||
                         nft.parsedMetadata?.image) &&
                       !imageErrors[nft.token_id] ? (
@@ -203,6 +207,14 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
               </p>
             </div>
           )}
+        </div>
+
+        <div>
+          <h3 className="mb-3 text-lg font-semibold text-white">
+            Insight Diário
+          </h3>
+
+          <InsightsCard collection={collection.collection_title} />
         </div>
       </DialogContent>
     </Dialog>
