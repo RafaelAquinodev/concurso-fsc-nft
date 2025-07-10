@@ -143,7 +143,7 @@ export const AddWalletModal = ({ children }: AddWalletModalProps) => {
           </Button>
         )}
       </DialogTrigger>
-      <DialogContent className="h-full max-h-[80vh] overflow-y-auto p-4 sm:max-w-[600px] sm:p-6">
+      <DialogContent className="max-h-[90vh] overflow-y-auto p-4 sm:max-w-[600px] sm:p-6">
         <DialogHeader>
           <DialogTitle>Gerenciar Carteiras</DialogTitle>
           <DialogDescription>
