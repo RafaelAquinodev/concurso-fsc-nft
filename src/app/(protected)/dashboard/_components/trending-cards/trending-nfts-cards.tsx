@@ -5,6 +5,7 @@ import { TrendingUp } from "lucide-react";
 import TrendingNftCard from "./trending-nfts-card";
 import CollectionModal from "./collection-modal";
 import { TrendingCollection } from "@/hooks/use-trending-nfts";
+import { useSidebar } from "@/components/ui/sidebar";
 
 type TrendingNFTsCardsProps = {
   collections?: TrendingCollection[];
@@ -23,6 +24,7 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
   const [selectedCollection, setSelectedCollection] =
     useState<TrendingCollection | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isMobile } = useSidebar();
 
   const GAP = 16;
 
@@ -105,7 +107,7 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
           <span className="mt-1 text-sm text-gray-400">Últimas 24 horas</span>
         </div>
         <div className="flex items-center justify-center gap-4 overflow-x-auto">
-          {Array.from({ length: 4 }).map((_, index) => (
+          {Array.from({ length: maxCards }).map((_, index) => (
             <div
               key={index}
               className="bg-brand-indigo h-[88px] w-[180px] animate-pulse rounded-lg"
@@ -142,15 +144,40 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
         </h2>
         <span className="mt-1 text-sm text-gray-400">Últimas 24 horas</span>
       </div>
-      <div className="mx-auto flex justify-center gap-4">
-        {collections.slice(0, maxCards).map((collection, index) => (
-          <TrendingNftCard
-            key={`${collection.collection_address}-${index}`}
-            collection={collection}
-            onClick={handleCollectionClick}
-          />
-        ))}
-      </div>
+      {!isMobile ? (
+        <div className="mx-auto flex justify-center gap-4">
+          {collections.slice(0, maxCards).map((collection, index) => (
+            <TrendingNftCard
+              key={`${collection.collection_address}-${index}`}
+              collection={collection}
+              onClick={handleCollectionClick}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="max-[500px]:space-y-4 min-[500px]:columns-2">
+          <div className="overflow-y-hidden-auto flex flex-col items-center justify-center gap-4">
+            {collections.slice(0, 3).map((collection, index) => (
+              <TrendingNftCard
+                key={`${collection.collection_address}-${index}`}
+                collection={collection}
+                onClick={handleCollectionClick}
+                cardWidth={200}
+              />
+            ))}
+          </div>
+          <div className="overflow-y-hidden-auto flex flex-col items-center justify-center gap-4">
+            {collections.slice(3, 6).map((collection, index) => (
+              <TrendingNftCard
+                key={`${collection.collection_address}-${index}`}
+                collection={collection}
+                onClick={handleCollectionClick}
+                cardWidth={200}
+              />
+            ))}
+          </div>
+        </div>
+      )}
 
       <CollectionModal
         collection={selectedCollection}
