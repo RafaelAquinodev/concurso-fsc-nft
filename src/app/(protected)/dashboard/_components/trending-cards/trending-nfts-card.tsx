@@ -13,7 +13,7 @@ type NftCardProps = {
 
 const TrendingNftCard: React.FC<NftCardProps> = ({
   collection,
-  cardWidth = 160,
+  cardWidth = 180,
   onClick,
 }) => {
   const [imageError, setImageError] = useState(false);
@@ -95,7 +95,7 @@ const TrendingNftCard: React.FC<NftCardProps> = ({
             {collection.collection_title}
           </h3>
 
-          <div className="space-y-1">
+          <div className="space-y-1 pr-1 pl-0.5">
             <div className="flex items-center justify-between">
               <span className="flex-shrink-0 text-xs text-gray-400">Floor</span>
               <span className="ml-2 truncate font-mono text-xs text-white">
