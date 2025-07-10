@@ -9,8 +9,10 @@ import {
   WalletMinimalIcon,
 } from "lucide-react";
 import { useWalletValue } from "@/hooks/use-wallet-value";
+import { useSidebar } from "@/components/ui/sidebar";
 
 const InfoCards = () => {
+  const { open } = useSidebar();
   const { walletAddress } = useWallet();
   const { stats } = useWalletStats({
     address: walletAddress,
@@ -54,17 +56,33 @@ const InfoCards = () => {
   ];
 
   return (
-    <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 min-[1100px]:max-[1370px]:grid-cols-2">
-      {infos.map((info) => (
-        <InfoCard
-          key={info.name}
-          name={info.name}
-          value={info.value}
-          icon={info.icon}
-          gradient={info.gradient}
-        />
-      ))}
-    </div>
+    <>
+      {open ? (
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 min-[1100px]:max-[1380px]:grid-cols-2">
+          {infos.map((info) => (
+            <InfoCard
+              key={info.name}
+              name={info.name}
+              value={info.value}
+              icon={info.icon}
+              gradient={info.gradient}
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(250px,1fr))] gap-4 min-[910px]:max-[1180px]:grid-cols-2">
+          {infos.map((info) => (
+            <InfoCard
+              key={info.name}
+              name={info.name}
+              value={info.value}
+              icon={info.icon}
+              gradient={info.gradient}
+            />
+          ))}
+        </div>
+      )}
+    </>
   );
 };
 
