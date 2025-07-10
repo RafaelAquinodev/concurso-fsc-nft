@@ -13,7 +13,7 @@ import { TrendingCollection } from "@/hooks/use-trending-nfts";
 import { useCollectionNFTs } from "@/hooks/use-collection-nfts";
 import { formatUsd } from "@/utils/format-usd";
 import Image from "next/image";
-import InsightsCard from "../insights-card";
+import InsightsCard from "./insights-card";
 
 interface CollectionModalProps {
   collection: TrendingCollection | null;
@@ -55,11 +55,11 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="bg-secondary max-h-[90vh] overflow-y-auto p-4 sm:max-w-[700px] sm:p-6">
-        <DialogHeader
-          className="gap-3"
-          aria-describedby="Diálogo com um resumo sobre a coleção."
-        >
+      <DialogContent
+        className="bg-secondary max-h-[90vh] overflow-y-auto p-4 sm:max-w-[700px] sm:p-6"
+        aria-describedby={undefined}
+      >
+        <DialogHeader className="gap-3">
           <DialogTitle>
             {loading && (
               <Skeleton className="mt-6 h-24 w-full rounded-lg sm:mt-3 sm:h-44" />
