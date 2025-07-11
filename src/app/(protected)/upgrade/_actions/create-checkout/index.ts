@@ -5,7 +5,6 @@ import Stripe from "stripe";
 
 export const createCheckout = async () => {
   const { userId } = await auth();
-  console.log("User ID:", userId);
 
   if (!userId) {
     throw new Error("Unauthorized");
