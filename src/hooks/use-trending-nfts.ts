@@ -66,7 +66,6 @@ export const useTrendingNFTs =
         }
 
         const data = await response.json();
-        console.log(data);
 
         setTrendingCollections(data);
       } catch (err) {

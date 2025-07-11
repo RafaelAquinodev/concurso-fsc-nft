@@ -162,7 +162,8 @@ export function AppSidebar({ fontClass }: Props) {
                   Upgrade para Premium
                 </h3>
                 <p className="mt-1 text-xs text-gray-300">
-                  Monitore carteiras ilimitadas e salve NFTs como favoritos.
+                  Monitore carteiras ilimitadas, favorite NFTs e obtenha
+                  insights de IA sobre as coleções em alta.
                 </p>
                 <Link href="/upgrade">
                   <button className="gradient-brand mt-3 w-full cursor-pointer rounded-lg px-4 py-2 text-sm font-semibold text-white transition duration-200 hover:shadow-[0_0_8px_rgba(255,0,204,0.6)]">

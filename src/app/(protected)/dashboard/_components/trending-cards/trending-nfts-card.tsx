@@ -7,10 +7,15 @@ import { TrendingCollection } from "@/hooks/use-trending-nfts";
 
 type NftCardProps = {
   collection: TrendingCollection;
+  cardWidth?: number;
   onClick: (collection: TrendingCollection) => void;
 };
 
-const TrendingNftCard: React.FC<NftCardProps> = ({ collection, onClick }) => {
+const TrendingNftCard: React.FC<NftCardProps> = ({
+  collection,
+  cardWidth = 180,
+  onClick,
+}) => {
   const [imageError, setImageError] = useState(false);
   const [imageLoading, setImageLoading] = useState(true);
 
@@ -80,8 +85,9 @@ const TrendingNftCard: React.FC<NftCardProps> = ({ collection, onClick }) => {
       </div>
 
       {/* Card */}
-      <div 
-        className="group bg-brand-indigo ml-6 flex w-40 cursor-pointer items-center overflow-hidden rounded-xl border border-neutral-600 transition-all duration-300 hover:scale-102 hover:border-purple-500"
+      <div
+        className="group bg-brand-indigo ml-6 flex cursor-pointer items-center overflow-hidden rounded-xl border border-neutral-600 transition-all duration-300 hover:scale-102 hover:border-purple-500"
+        style={{ width: `${cardWidth}px` }}
         onClick={() => onClick(collection)}
       >
         <div className="flex min-w-0 flex-1 flex-col justify-between space-y-2 p-3 pl-8">
@@ -89,7 +95,7 @@ const TrendingNftCard: React.FC<NftCardProps> = ({ collection, onClick }) => {
             {collection.collection_title}
           </h3>
 
-          <div className="space-y-1">
+          <div className="space-y-1 pr-1 pl-0.5">
             <div className="flex items-center justify-between">
               <span className="flex-shrink-0 text-xs text-gray-400">Floor</span>
               <span className="ml-2 truncate font-mono text-xs text-white">
