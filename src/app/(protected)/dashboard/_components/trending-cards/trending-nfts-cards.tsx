@@ -3,15 +3,17 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { TrendingUp } from "lucide-react";
 import TrendingNftCard from "./trending-nfts-card";
+import CollectionModal from "./collection-modal";
 import { TrendingCollection } from "@/hooks/use-trending-nfts";
+import { useSidebar } from "@/components/ui/sidebar";
 
 type TrendingNFTsCardsProps = {
   collections?: TrendingCollection[];
   loading?: boolean;
 };
 
-const SLIDE_WIDTH = 190;
-const MAX_CARDS_LIMIT = 12;
+const SLIDE_WIDTH = 210;
+const MAX_CARDS_LIMIT = 14;
 
 const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
   collections,
@@ -19,6 +21,10 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const [maxCards, setMaxCards] = useState(MAX_CARDS_LIMIT);
+  const [selectedCollection, setSelectedCollection] =
+    useState<TrendingCollection | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const { isMobile } = useSidebar();
 
   const GAP = 16;
 
@@ -47,6 +53,19 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
       setMaxCards(newMaxCards);
     }
   }, [calculateMaxCards, maxCards]);
+
+  const handleCollectionClick = useCallback(
+    (collection: TrendingCollection) => {
+      setSelectedCollection(collection);
+      setIsModalOpen(true);
+    },
+    [],
+  );
+
+  const handleCloseModal = useCallback(() => {
+    setIsModalOpen(false);
+    setSelectedCollection(null);
+  }, []);
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -88,12 +107,24 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
           <span className="mt-1 text-sm text-gray-400">Últimas 24 horas</span>
         </div>
         <div className="flex items-center justify-center gap-4 overflow-x-auto">
-          {Array.from({ length: 4 }).map((_, index) => (
-            <div
-              key={index}
-              className="bg-brand-indigo h-[88px] w-[180px] animate-pulse rounded-lg"
-            ></div>
-          ))}
+          <div className="mx-auto flex flex-col justify-center gap-4">
+            <div className="mx-auto flex gap-4">
+              {Array.from({ length: maxCards }).map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-brand-indigo h-[88px] w-[180px] animate-pulse rounded-lg"
+                ></div>
+              ))}
+            </div>
+            <div className="mx-auto flex gap-4">
+              {Array.from({ length: maxCards }).map((_, index) => (
+                <div
+                  key={index}
+                  className="bg-brand-indigo h-[88px] w-[180px] animate-pulse rounded-lg"
+                ></div>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     );
@@ -125,14 +156,59 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
         </h2>
         <span className="mt-1 text-sm text-gray-400">Últimas 24 horas</span>
       </div>
-      <div className="mx-auto flex justify-center gap-4">
-        {collections.slice(0, maxCards).map((collection, index) => (
-          <TrendingNftCard
-            key={`${collection.collection_id}-${index}`}
-            collection={collection}
-          />
-        ))}
-      </div>
+      {!isMobile ? (
+        <div className="mx-auto flex flex-col justify-center gap-4">
+          <div className="mx-auto flex gap-4">
+            {collections.slice(0, maxCards).map((collection, index) => (
+              <TrendingNftCard
+                key={`${collection.collection_address}-${index}`}
+                collection={collection}
+                onClick={handleCollectionClick}
+              />
+            ))}
+          </div>
+          <div className="mx-auto hidden gap-4 max-[1921px]:flex">
+            {collections
+              .slice(maxCards, maxCards * 2)
+              .map((collection, index) => (
+                <TrendingNftCard
+                  key={`${collection.collection_address}-${index}`}
+                  collection={collection}
+                  onClick={handleCollectionClick}
+                />
+              ))}
+          </div>
+        </div>
+      ) : (
+        <div className="max-[500px]:space-y-4 min-[500px]:columns-2">
+          <div className="flex flex-col items-center justify-center gap-4">
+            {collections.slice(0, 3).map((collection, index) => (
+              <TrendingNftCard
+                key={`${collection.collection_address}-${index}`}
+                collection={collection}
+                onClick={handleCollectionClick}
+                cardWidth={200}
+              />
+            ))}
+          </div>
+          <div className="flex flex-col items-center justify-center gap-4">
+            {collections.slice(3, 6).map((collection, index) => (
+              <TrendingNftCard
+                key={`${collection.collection_address}-${index}`}
+                collection={collection}
+                onClick={handleCollectionClick}
+                cardWidth={200}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+
+      <CollectionModal
+        collection={selectedCollection}
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+      />
     </div>
   );
 };

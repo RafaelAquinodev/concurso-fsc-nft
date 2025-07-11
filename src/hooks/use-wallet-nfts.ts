@@ -22,11 +22,11 @@ export const useWalletNFTs = ({
   const [totalCount, setTotalCount] = useState(0);
   const [nextCursor, setNextCursor] = useState<string | null>(null);
 
-  // const hasPrice = (nft: NFT): boolean => {
-  //   const floorPrice = nft.floor_price || nft.list_price?.price;
+  const hasMetadata = (nft: NFT): boolean => {
+    const metadata = nft.metadata || nft.normalized_metadata;
 
-  //   return Boolean(floorPrice && floorPrice.trim());
-  // };
+    return Boolean(metadata);
+  };
 
   const resolveImageUrl = (nft: NFT): string | null => {
     const rawImage = nft.normalized_metadata?.image;
@@ -84,8 +84,8 @@ export const useWalletNFTs = ({
 
         const data: NFTResponse = await response.json();
 
-        // const filteredResults = data.result.filter(hasPrice);
-        const enhancedResults = data.result.map((nft) => ({
+        const filteredResults = data.result.filter(hasMetadata);
+        const enhancedResults = filteredResults.map((nft) => ({
           ...nft,
           resolvedImageUrl: resolveImageUrl(nft),
         }));
