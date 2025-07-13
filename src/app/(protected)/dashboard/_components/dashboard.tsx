@@ -4,7 +4,6 @@ import { useWallet } from "@/context/wallet-context";
 import { useWalletTransfers } from "@/hooks/use-wallet-transfers";
 import { truncateAddress } from "@/utils/truncate-address";
 import React from "react";
-import { useTrendingNFTs } from "@/hooks/use-trending-nfts";
 import RecentTransferCard from "./recent-transfer-card/recent-transfer-card";
 import InfoCards from "./info-cards/info-cards";
 import TrendingNFTsCards from "./trending-cards/trending-nfts-cards";
@@ -16,7 +15,6 @@ const Dashboard = () => {
   const { transfers } = useWalletTransfers({
     address: walletAddress,
   });
-  const { trendingCollections, loading } = useTrendingNFTs();
 
   const walletName = allWallets.find(
     (wallet) => wallet.address === walletAddress,
@@ -39,10 +37,7 @@ const Dashboard = () => {
           <InfoCards />
 
           {/* Cards de NFTs Trending */}
-          <TrendingNFTsCards
-            collections={trendingCollections}
-            loading={loading}
-          />
+          <TrendingNFTsCards />
 
           <div className="grid w-full grid-cols-1 gap-4 min-[1000px]:grid-cols-2 xl:grid-cols-3">
             {/* Performance da Carteira */}
