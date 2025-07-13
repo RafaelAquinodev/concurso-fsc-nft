@@ -10,15 +10,6 @@ export interface CollectionNFT {
   symbol: string;
   token_uri: string;
   metadata: string;
-  parsedMetadata?: {
-    image?: string;
-    name?: string;
-    description?: string;
-    attributes?: Array<{
-      trait_type: string;
-      value: string;
-    }>;
-  };
   last_token_uri_sync: string;
   last_metadata_sync: string;
   minter_address: string;
@@ -58,7 +49,7 @@ export interface CollectionNFT {
     description: string;
     animation_url: string;
     external_link: string;
-    image: string;
+    image: string | null;
     attributes: Array<{
       trait_type: string;
       value: string;
