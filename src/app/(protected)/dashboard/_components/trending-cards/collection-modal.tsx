@@ -1,6 +1,5 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -14,6 +13,7 @@ import { useCollectionNFTs } from "@/hooks/use-collection-nfts";
 import { formatUsd } from "@/utils/format-usd";
 import Image from "next/image";
 import InsightsCard from "./insights-card";
+import { resolveIpfsUrl } from "@/utils/resolve-ipfs-url";
 
 interface CollectionModalProps {
   collection: TrendingCollection | null;
@@ -26,57 +26,46 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
   isOpen,
   onClose,
 }) => {
-  const { nfts, loading, error, fetchNFTs } = useCollectionNFTs();
-  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+  const collectionAddress = collection?.collection_address;
 
-  useEffect(() => {
-    if (isOpen && collection?.collection_address) {
-      fetchNFTs(collection.collection_address);
-    }
-  }, [isOpen, collection?.collection_address, fetchNFTs]);
-
-  const handleImageError = (tokenId: string) => {
-    setImageErrors((prev) => ({ ...prev, [tokenId]: true }));
-  };
-
-  const convertIpfsToHttp = (url: string) => {
-    if (url.startsWith("ipfs://")) {
-      return url.replace("ipfs://", "https://ipfs.io/ipfs/");
-    }
-    return url;
-  };
-
-  const handleClose = () => {
-    setImageErrors({});
-    onClose();
-  };
+  const {
+    data: nfts = [],
+    isLoading,
+    isError,
+    error,
+  } = useCollectionNFTs({
+    collectionAddress,
+    enabled: !!collectionAddress && isOpen,
+  });
 
   if (!collection) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={handleClose}>
+    <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent
         className="bg-secondary max-h-[90vh] overflow-y-auto p-4 sm:max-w-[700px] sm:p-6"
         aria-describedby={undefined}
       >
         <DialogHeader className="gap-3">
           <DialogTitle>
-            {loading && (
+            {isLoading && (
               <Skeleton className="mt-6 h-24 w-full rounded-lg sm:mt-3 sm:h-44" />
             )}
 
-            {!loading && nfts.length > 0 && nfts[0].collection_banner_image && (
-              <Image
-                src={convertIpfsToHttp(nfts[0].collection_banner_image)}
-                alt={collection.collection_title}
-                width={700}
-                height={200}
-                className="mt-6 rounded-lg border object-cover sm:mt-3"
-                onError={(e) => {
-                  e.currentTarget.style.display = "none";
-                }}
-              />
-            )}
+            {!isLoading &&
+              nfts.length > 0 &&
+              nfts[0].collection_banner_image && (
+                <Image
+                  src={resolveIpfsUrl(nfts[0].collection_banner_image)}
+                  alt={collection.collection_title}
+                  width={700}
+                  height={200}
+                  className="mt-6 max-h-52 rounded-lg border object-cover sm:mt-3"
+                  onError={(e) => {
+                    e.currentTarget.style.display = "none";
+                  }}
+                />
+              )}
           </DialogTitle>
           <div className="flex items-center gap-2">
             {collection.collection_image && (
@@ -118,7 +107,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
             NFTs da Coleção
           </h3>
 
-          {loading && (
+          {isLoading && (
             <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
               {Array.from({ length: 4 }).map((_, index) => (
                 <Card key={index} className="bg-brand-indigo rounded-xl p-0">
@@ -134,14 +123,16 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
             </div>
           )}
 
-          {error && (
+          {isError && (
             <div className="py-8 text-center">
-              <p className="text-red-400">{error}</p>
+              <p className="text-red-400">
+                {error?.message || "Erro ao buscar NFTs"}
+              </p>
             </div>
           )}
 
           {/* Cards de NFTs */}
-          {!loading && !error && nfts.length > 0 && (
+          {!isLoading && !isError && nfts.length > 0 && (
             <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
               {nfts.map((nft) => (
                 <Card
@@ -150,27 +141,22 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
                 >
                   <CardContent className="p-2">
                     <div className="overflow-hidden rounded-lg bg-gray-700">
-                      {(nft.normalized_metadata?.image ||
-                        nft.parsedMetadata?.image) &&
-                      !imageErrors[nft.token_id] ? (
+                      {nft.normalized_metadata?.image ? (
                         <Image
-                          src={convertIpfsToHttp(
-                            nft.normalized_metadata?.image ||
-                              nft.parsedMetadata?.image ||
-                              "",
-                          )}
+                          src={nft.normalized_metadata?.image}
                           alt={
                             nft.normalized_metadata?.name ||
-                            nft.parsedMetadata?.name ||
                             `NFT #${nft.token_id}`
                           }
                           width={128}
                           height={128}
                           className="h-full w-full object-cover"
-                          onError={() => handleImageError(nft.token_id)}
+                          onError={(e) => {
+                            e.currentTarget.style.display = "none";
+                          }}
                         />
                       ) : (
-                        <div className="flex h-full w-full items-center justify-center bg-gray-700">
+                        <div className="flex h-full min-h-32 w-full items-center justify-center bg-gray-700">
                           <svg
                             className="h-12 w-12 text-gray-500"
                             fill="currentColor"
@@ -187,9 +173,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
                     </div>
                     <div className="flex flex-col p-1">
                       <h2 className="truncate text-sm font-semibold text-white">
-                        {nft.normalized_metadata?.name ||
-                          nft.parsedMetadata?.name ||
-                          `#${nft.token_id}`}
+                        {nft.normalized_metadata?.name || `#${nft.token_id}`}
                       </h2>
 
                       <p className="text-xs text-gray-400">{nft.symbol}</p>
@@ -200,7 +184,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
             </div>
           )}
 
-          {!loading && !error && nfts.length === 0 && (
+          {!isLoading && !isError && nfts.length === 0 && (
             <div className="py-8 text-center">
               <p className="text-gray-400">
                 Nenhum NFT encontrado nesta coleção

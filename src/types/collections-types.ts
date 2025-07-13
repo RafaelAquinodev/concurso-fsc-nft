@@ -49,7 +49,7 @@ export interface CollectionNFT {
     description: string;
     animation_url: string;
     external_link: string;
-    image: string | null;
+    image: string;
     attributes: Array<{
       trait_type: string;
       value: string;
