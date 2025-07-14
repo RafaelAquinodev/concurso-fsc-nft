@@ -8,12 +8,12 @@ import {
 } from "@/components/ui/dialog";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { TrendingCollection } from "@/hooks/use-trending-nfts";
 import { useCollectionNFTs } from "@/hooks/use-collection-nfts";
 import { formatUsd } from "@/utils/format-usd";
 import Image from "next/image";
 import InsightsCard from "./insights-card";
 import { resolveIpfsUrl } from "@/utils/resolve-ipfs-url";
+import { TrendingCollection } from "@/types/trending-collections-types";
 
 interface CollectionModalProps {
   collection: TrendingCollection | null;

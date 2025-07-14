@@ -97,7 +97,7 @@ const TrendingNFTsCards: React.FC = () => {
   }, [handleResize]);
 
   const header = (
-    <div className="mb-6 flex items-center gap-4">
+    <div className="mb-4 flex items-center gap-4">
       <h2 className="flex items-center gap-2 text-lg font-bold text-white">
         <TrendingUp className="text-brand-purple h-5 w-5" />
         NFTs em Alta
