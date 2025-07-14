@@ -52,7 +52,6 @@ interface NFT {
   normalized_metadata?: {
     image?: string;
   };
-  resolvedImageUrl?: string | null;
 }
 
 interface NFTResponse {
@@ -78,8 +77,8 @@ interface UseWalletNFTsReturn {
   nfts: NFT[];
   loading: boolean;
   error: string | null;
-  totalCount: number;
   hasNextPage: boolean;
+  isFetchingNextPage: boolean;
   cursor: string | null;
   refetch: () => void;
   loadMore: () => void;

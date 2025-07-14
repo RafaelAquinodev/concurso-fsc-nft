@@ -65,7 +65,7 @@ const NftCard: React.FC<NftCardProps> = ({
     <div className="overflow-hidden rounded-xl bg-neutral-900 shadow-[0_5px_0_0_#6934ab] transition-all duration-300 hover:scale-102 hover:shadow-[0_0px_5px_0_#6934ab] max-[550px]:mx-auto max-[550px]:max-w-[280px]">
       {/* Imagem do NFT */}
       <div className="bg-brand-indigo relative h-64">
-        {nft.resolvedImageUrl && !imageError ? (
+        {nft.normalized_metadata?.image && !imageError ? (
           <>
             {imageLoading && (
               <div className="absolute inset-0 flex items-center justify-center">
@@ -73,7 +73,7 @@ const NftCard: React.FC<NftCardProps> = ({
               </div>
             )}
             <Image
-              src={nft.resolvedImageUrl}
+              src={nft.normalized_metadata?.image}
               alt={nft.metadata?.name || `NFT ${nft.token_id}`}
               loading="lazy"
               width={300}

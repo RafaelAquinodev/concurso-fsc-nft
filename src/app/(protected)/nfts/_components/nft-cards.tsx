@@ -5,17 +5,32 @@ import React from "react";
 import NftCard from "./nft-card";
 import { useWallet } from "@/context/wallet-context";
 import { useFavoriteNFTs } from "@/hooks/use-favorite-nfts";
+import { useInfiniteScroll } from "@/hooks/use-infinite-scroll";
+import LoadingSpin from "../../_components/loading-spin";
 
 const NftCards = () => {
   const { walletAddress } = useWallet();
 
-  const { nfts, loading, error, hasNextPage, refetch, loadMore } =
-    useWalletNFTs({
-      address: walletAddress,
-      normalizeMetadata: true,
-    });
+  const {
+    nfts,
+    loading,
+    error,
+    hasNextPage,
+    isFetchingNextPage,
+    refetch,
+    loadMore,
+  } = useWalletNFTs({
+    address: walletAddress,
+  });
 
   const { addFavorite, removeFavorite, favorites } = useFavoriteNFTs();
+
+  const infiniteScrollRef = useInfiniteScroll({
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage: loadMore,
+    rootMargin: "200px", // Distância para o final da page
+  });
 
   return (
     <div className="h-full min-h-full w-full">
@@ -55,32 +70,42 @@ const NftCards = () => {
 
       {/* Grid de NFTs */}
       {nfts.length > 0 && (
-        <>
-          <div className="mb-8 grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6 max-[550px]:justify-center">
-            {nfts.map((nft) => (
-              <NftCard
-                key={`${nft.token_address}-${nft.token_id}`}
-                nft={nft}
-                addFavorite={addFavorite}
-                removeFavorite={removeFavorite}
-                favorites={favorites}
-              />
-            ))}
-          </div>
+        <div className="mb-8 grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6 max-[550px]:justify-center">
+          {nfts.map((nft) => (
+            <NftCard
+              key={`${nft.token_address}-${nft.token_id}`}
+              nft={nft}
+              addFavorite={addFavorite}
+              removeFavorite={removeFavorite}
+              favorites={favorites}
+            />
+          ))}
+        </div>
+      )}
 
-          {/* Botão carregar mais */}
-          {hasNextPage && (
-            <div className="flex justify-center">
-              <button
-                onClick={loadMore}
-                disabled={loading}
-                className="gradient-brand cursor-pointer rounded-xl px-8 py-3 text-white shadow-lg transition-all duration-200 hover:opacity-90 disabled:cursor-not-allowed disabled:opacity-50"
-              >
-                {loading ? "Carregando..." : "Carregar mais NFTs"}
-              </button>
+      {/* Aqui fica o obeserver do infinite scroll */}
+      {hasNextPage && (
+        <div ref={infiniteScrollRef} className="flex justify-center py-8">
+          {isFetchingNextPage ? (
+            <div className="flex items-center justify-center gap-2">
+              <div>
+                <LoadingSpin size="sm" />
+              </div>
+              <span className="text-gray-100">Carregando mais...</span>
             </div>
+          ) : (
+            <div className="h-4 w-4" />
           )}
-        </>
+        </div>
+      )}
+
+      {/* Indica fim dos NFTs */}
+      {!hasNextPage && nfts.length > 0 && (
+        <div className="flex justify-center py-6">
+          <p className="text-sm text-gray-400">
+            ✨ Todos os NFTs foram carregados
+          </p>
+        </div>
       )}
     </div>
   );
