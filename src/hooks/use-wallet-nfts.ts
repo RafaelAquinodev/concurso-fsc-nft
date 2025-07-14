@@ -17,6 +17,12 @@ export const useWalletNFTs = ({
   excludeSpam = true,
   enabled = true,
 }: UseWalletNFTsProps & { enabled?: boolean }): UseWalletNFTsReturn => {
+  const hasMetadata = (nft: NFT): boolean => {
+    const metadata = nft.metadata || nft.normalized_metadata;
+
+    return Boolean(metadata);
+  };
+
   const {
     data,
     fetchNextPage,
@@ -67,8 +73,9 @@ export const useWalletNFTs = ({
   });
 
   const allNFTs = data?.pages.flatMap((page) => page.result) || [];
+  const filteredResults = allNFTs.filter(hasMetadata);
 
-  const resolvedNFTs = (allNFTs as NFT[]).map((nft) => ({
+  const resolvedNFTs = (filteredResults as NFT[]).map((nft) => ({
     ...nft,
     normalized_metadata: {
       ...nft.normalized_metadata,
