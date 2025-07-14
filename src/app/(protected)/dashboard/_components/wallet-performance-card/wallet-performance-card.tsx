@@ -11,6 +11,7 @@ interface WalletPerformanceCardProps {
 const WalletPerformanceCard = ({ address }: WalletPerformanceCardProps) => {
   const { performance, loading, error } = useWalletPerformance({
     address: address,
+    enabled: !!address,
   });
 
   return (
