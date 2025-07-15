@@ -5,6 +5,7 @@ import { StarIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import ImageErrorFallback from "../../_components/image-error-fallback";
 
 type FavoriteNftCardProps = {
   nft: NFT;
@@ -42,7 +43,7 @@ const FavoriteNftCard: React.FC<FavoriteNftCardProps> = ({
     <div className="overflow-hidden rounded-xl bg-neutral-900 shadow-[0_5px_0_0_#6934ab] transition-all duration-300 hover:scale-102 hover:shadow-[0_0px_5px_0_#6934ab]">
       {/* Imagem do NFT */}
       <div className="bg-brand-indigo relative h-64">
-        {nft.resolvedImageUrl && !imageError ? (
+        {nft.normalized_metadata?.image && !imageError ? (
           <>
             {imageLoading && (
               <div className="absolute inset-0 flex items-center justify-center">
@@ -50,8 +51,8 @@ const FavoriteNftCard: React.FC<FavoriteNftCardProps> = ({
               </div>
             )}
             <Image
-              src={nft.resolvedImageUrl}
-              alt={nft.metadata?.name || `NFT ${nft.token_id}`}
+              src={nft.normalized_metadata?.image}
+              alt={nft.normalized_metadata?.name || `NFT ${nft.token_id}`}
               loading="lazy"
               width={300}
               height={300}
@@ -67,24 +68,7 @@ const FavoriteNftCard: React.FC<FavoriteNftCardProps> = ({
           </>
         ) : (
           // Se a imagem não carregar, mostra svg
-          <div className="flex h-full w-full items-center justify-center">
-            <div className="text-center">
-              <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-lg bg-gray-400">
-                <svg
-                  className="h-8 w-8"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <p className="text-sm">Sem imagem</p>
-            </div>
-          </div>
+          <ImageErrorFallback />
         )}
       </div>
 
@@ -92,7 +76,9 @@ const FavoriteNftCard: React.FC<FavoriteNftCardProps> = ({
       <div className="bg-brand-indigo p-4">
         <div className="mb-2 flex">
           <h3 className="truncate text-lg font-bold text-white">
-            {nft.metadata?.name || nft.name || `Token #${nft.token_id}`}
+            {nft.normalized_metadata?.name ||
+              nft.name ||
+              `Token #${nft.token_id}`}
           </h3>
           <div className="ml-auto flex items-center">
             <StarIcon

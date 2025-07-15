@@ -1,40 +1,22 @@
-import { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useWalletNFTs } from "./use-wallet-nfts";
 import { useWalletStats } from "./use-wallet-stats";
+import {
+  UseWalletPerformanceReturn,
+  WalletPerformance,
+} from "@/types/wallet-performance-types";
 
 interface UseWalletPerformanceProps {
   address: string;
   chain?: string;
-}
-
-export interface WalletPerformance {
-  totalROIPercentage: number;
-  totalProfitLossUSD: number;
-
-  estimatedTotalInvestedUSD: number;
-  estimatedCurrentPortfolioValueUSD: number;
-
-  profitableNFTs: number;
-  unprofitableNFTs: number;
-  nftsWithSaleHistory: number;
-}
-
-export interface UseWalletPerformanceReturn {
-  performance: WalletPerformance | null;
-  loading: boolean;
-  error: string | null;
+  enabled?: boolean;
 }
 
 export const useWalletPerformance = ({
   address,
   chain = "eth",
+  enabled = true,
 }: UseWalletPerformanceProps): UseWalletPerformanceReturn => {
-  const [performance, setPerformance] = useState<WalletPerformance | null>(
-    null,
-  );
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
   const {
     nfts,
     loading: nftsLoading,
@@ -44,18 +26,20 @@ export const useWalletPerformance = ({
     chain,
     limit: 40,
     includePrices: true,
+    enabled: !!address && enabled,
   });
 
   const {
     stats,
-    loading: statsLoading,
+    isLoading: statsLoading,
     error: statsError,
   } = useWalletStats({
     address,
     chain,
+    enabled: !!address && enabled,
   });
 
-  const calculatedPerformance = useMemo(() => {
+  const calculatedPerformance = useMemo((): WalletPerformance | null => {
     if (!nfts || nfts.length === 0 || !stats) {
       return null;
     }
@@ -63,6 +47,7 @@ export const useWalletPerformance = ({
     const totalNfts = parseInt(stats.nfts);
     const sampleSize = nfts.length;
 
+    // Filtrar NFTs com histórico de venda e valor atual
     const nftsWithSaleHistory = nfts.filter((nft) => {
       const hasSaleHistory =
         nft.last_sale &&
@@ -76,6 +61,7 @@ export const useWalletPerformance = ({
       return hasSaleHistory && hasCurrentValue;
     });
 
+    // Se não há NFTs com histórico, retornar zero
     if (nftsWithSaleHistory.length === 0) {
       return {
         totalROIPercentage: 0,
@@ -88,6 +74,7 @@ export const useWalletPerformance = ({
       };
     }
 
+    // Calcular performance de cada NFT
     const nftPerformanceData = nftsWithSaleHistory.map((nft) => {
       const purchasePriceUSD = parseFloat(
         nft.last_sale?.usd_price_at_sale ?? "0",
@@ -118,6 +105,7 @@ export const useWalletPerformance = ({
       };
     });
 
+    // Calcular totais
     const totalPurchasePriceUSD = nftPerformanceData.reduce(
       (sum, nft) => sum + nft.purchasePriceUSD,
       0,
@@ -133,6 +121,7 @@ export const useWalletPerformance = ({
         ? (totalProfitLossUSD / totalPurchasePriceUSD) * 100
         : 0;
 
+    // Contar NFTs lucrativos vs não lucrativos
     const profitableNFTs = nftPerformanceData.filter(
       (nft) => nft.profitLossUSD > 0,
     ).length;
@@ -140,15 +129,19 @@ export const useWalletPerformance = ({
       (nft) => nft.profitLossUSD < 0,
     ).length;
 
+    // Estimar valores totais
     const historyRatio = nftsWithSaleHistory.length / sampleSize;
     const estimatedNftsWithHistory = Math.floor(totalNfts * historyRatio);
 
+    const averagePurchasePriceUSD =
+      totalPurchasePriceUSD / nftsWithSaleHistory.length;
+    const averageCurrentValueUSD =
+      totalCurrentValueUSD / nftsWithSaleHistory.length;
+
     const estimatedTotalInvestedUSD =
-      estimatedNftsWithHistory *
-      (totalPurchasePriceUSD / nftsWithSaleHistory.length);
+      estimatedNftsWithHistory * averagePurchasePriceUSD;
     const estimatedCurrentPortfolioValueUSD =
-      estimatedNftsWithHistory *
-      (totalCurrentValueUSD / nftsWithSaleHistory.length);
+      estimatedNftsWithHistory * averageCurrentValueUSD;
 
     return {
       totalROIPercentage: Number(totalROIPercentage.toFixed(2)),
@@ -163,20 +156,11 @@ export const useWalletPerformance = ({
     };
   }, [nfts, stats]);
 
-  useEffect(() => {
-    const isLoading = nftsLoading || statsLoading;
-    const hasError = nftsError || statsError;
-
-    setLoading(isLoading);
-    setError(hasError);
-
-    if (!isLoading && !hasError) {
-      setPerformance(calculatedPerformance);
-    }
-  }, [nftsLoading, statsLoading, nftsError, statsError, calculatedPerformance]);
+  const loading = nftsLoading || statsLoading;
+  const error = nftsError || statsError;
 
   return {
-    performance,
+    performance: calculatedPerformance,
     loading,
     error,
   };

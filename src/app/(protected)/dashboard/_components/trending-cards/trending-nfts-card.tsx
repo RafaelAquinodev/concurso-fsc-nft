@@ -3,7 +3,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React, { useState } from "react";
 import { TrendingUp, TrendingDown } from "lucide-react";
-import { TrendingCollection } from "@/hooks/use-trending-nfts";
+import { TrendingCollection } from "@/types/trending-collections-types";
 
 type NftCardProps = {
   collection: TrendingCollection;
