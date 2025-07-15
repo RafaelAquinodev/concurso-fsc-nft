@@ -50,7 +50,6 @@ interface NFT {
   last_metadata_sync?: string;
   minter_address?: string;
   normalized_metadata?: {
-    name?: string;
     image?: string;
   };
 }
