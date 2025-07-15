@@ -9,7 +9,7 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import { Card, CardContent } from "@/components/ui/card";
-import { WalletPerformance } from "@/hooks/use-wallet-performance";
+import { WalletPerformance } from "@/types/wallet-performance-types";
 
 interface WalletInvestimentChartProps {
   performance: WalletPerformance | null;

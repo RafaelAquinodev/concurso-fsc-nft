@@ -1,10 +1,11 @@
+import { useInfiniteQuery } from "@tanstack/react-query";
 import {
   NFT,
   NFTResponse,
   UseWalletNFTsProps,
   UseWalletNFTsReturn,
 } from "@/types/nfts-types";
-import { useState, useEffect, useCallback } from "react";
+import { resolveIpfsUrl } from "@/utils/resolve-ipfs-url";
 
 export const useWalletNFTs = ({
   address,
@@ -12,152 +13,86 @@ export const useWalletNFTs = ({
   limit = 40,
   cursor,
   normalizeMetadata = true,
-  mediaItems = false,
   includePrices = true,
   excludeSpam = true,
-}: UseWalletNFTsProps): UseWalletNFTsReturn => {
-  const [nfts, setNfts] = useState<NFT[]>([]);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [totalCount, setTotalCount] = useState(0);
-  const [nextCursor, setNextCursor] = useState<string | null>(null);
-
+  enabled = true,
+}: UseWalletNFTsProps & { enabled?: boolean }): UseWalletNFTsReturn => {
   const hasMetadata = (nft: NFT): boolean => {
     const metadata = nft.metadata || nft.normalized_metadata;
 
     return Boolean(metadata);
   };
 
-  const resolveImageUrl = (nft: NFT): string | null => {
-    const rawImage = nft.normalized_metadata?.image;
-    if (!rawImage) return null;
-
-    if (rawImage.startsWith("ipfs://")) {
-      return rawImage.replace("ipfs://", "https://ipfs.io/ipfs/");
-    }
-
-    return rawImage;
-  };
-
-  const fetchNFTs = useCallback(
-    async (loadMore = false, customCursor?: string, retryAttempt = 0) => {
-      if (!address || !address.trim()) {
-        setError("Endereço da wallet é obrigatório");
-        return;
-      }
-
-      const apiKey = process.env.NEXT_PUBLIC_MORALIS_API_KEY;
-      if (!apiKey) {
-        setError("MORALIS_API_KEY não configurada");
-        return;
-      }
-
-      setLoading(true);
-      setError(null);
-
-      try {
-        const url = new URL(
-          `https://deep-index.moralis.io/api/v2.2/${address.trim()}/nft`,
-        );
-        url.searchParams.set("chain", chain);
-        url.searchParams.set("format", "decimal");
-        url.searchParams.set("limit", limit.toString());
-        url.searchParams.set("normalizeMetadata", normalizeMetadata.toString());
-        url.searchParams.set("media_items", mediaItems.toString());
-        url.searchParams.set("include_prices", includePrices.toString());
-        url.searchParams.set("exclude_spam", excludeSpam.toString());
-
-        if (customCursor || cursor) {
-          url.searchParams.set("cursor", customCursor || cursor || "");
-        }
-
-        const response = await fetch(url.toString(), {
-          headers: {
-            "X-API-Key": apiKey,
-            "Content-Type": "application/json",
-          },
-        });
-
-        if (!response.ok) {
-          throw new Error(`Erro ${response.status}: ${response.statusText}`);
-        }
-
-        const data: NFTResponse = await response.json();
-
-        const filteredResults = data.result.filter(hasMetadata);
-        const enhancedResults = filteredResults.map((nft) => ({
-          ...nft,
-          resolvedImageUrl: resolveImageUrl(nft),
-        }));
-
-        if (
-          !loadMore &&
-          enhancedResults.length === 0 &&
-          data.cursor &&
-          retryAttempt === 0
-        ) {
-          console.log("Primeira página sem NFTs, tentando próxima página...");
-          setLoading(false);
-          return fetchNFTs(false, data.cursor, 1);
-        }
-
-        if (loadMore) {
-          setNfts((prev) => [...prev, ...enhancedResults]);
-        } else {
-          setNfts(enhancedResults);
-        }
-
-        setTotalCount(data.total);
-        setNextCursor(data.cursor || null);
-      } catch (err) {
-        const errorMessage =
-          err instanceof Error ? err.message : "Erro ao buscar NFTs";
-        setError(errorMessage);
-        console.error("Erro ao buscar NFTs:", err);
-      } finally {
-        setLoading(false);
-      }
-    },
-    [
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useInfiniteQuery({
+    queryKey: [
+      "walletNFTs",
       address,
       chain,
-      cursor,
       limit,
       normalizeMetadata,
-      mediaItems,
       includePrices,
       excludeSpam,
     ],
-  );
+    enabled: !!address && address.trim() !== "" && enabled,
+    queryFn: async ({ pageParam = "" }) => {
+      const params = new URLSearchParams({
+        address: address.trim(),
+        chain,
+        limit: String(limit),
+        normalizeMetadata: normalizeMetadata.toString(),
+        includePrices: includePrices.toString(),
+        excludeSpam: excludeSpam.toString(),
+      });
 
-  const refetch = () => {
-    setNfts([]);
-    setNextCursor(null);
-    fetchNFTs(false);
-  };
+      if (pageParam) {
+        params.set("cursor", pageParam);
+      }
 
-  const loadMore = () => {
-    if (nextCursor && !loading) {
-      fetchNFTs(true, nextCursor);
-    }
-  };
+      const url = `/api/wallet/nfts?${params.toString()}`;
 
-  useEffect(() => {
-    if (address) {
-      setNfts([]);
-      setNextCursor(null);
-      fetchNFTs();
-    }
-  }, [address, fetchNFTs]);
+      const res = await fetch(url);
+      const data = await res.json();
+
+      if (data.error) {
+        throw new Error(data.error);
+      }
+
+      return data as NFTResponse;
+    },
+    getNextPageParam: (lastPage) => lastPage.cursor || undefined,
+    initialPageParam: cursor || "",
+  });
+
+  const allNFTs = data?.pages.flatMap((page) => page.result) || [];
+  const filteredResults = allNFTs.filter(hasMetadata);
+
+  const resolvedNFTs = (filteredResults as NFT[]).map((nft) => ({
+    ...nft,
+    normalized_metadata: {
+      ...nft.normalized_metadata,
+      image: resolveIpfsUrl(nft.normalized_metadata?.image),
+    },
+  }));
+
+  const nextCursor = data?.pages?.[data.pages.length - 1]?.cursor || null;
 
   return {
-    nfts,
-    loading,
-    error,
-    totalCount,
-    hasNextPage: !!nextCursor,
+    nfts: resolvedNFTs,
+    loading: isLoading,
+    error: isError ? (error?.message ?? "Erro ao buscar NFTs") : null,
+    hasNextPage: !!hasNextPage,
+    isFetchingNextPage,
     cursor: nextCursor,
-    refetch,
-    loadMore,
+    refetch: () => refetch(),
+    loadMore: () => fetchNextPage(),
   };
 };

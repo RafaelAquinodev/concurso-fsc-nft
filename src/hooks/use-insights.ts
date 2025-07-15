@@ -10,7 +10,7 @@ interface CachedInsight extends NFTInsight {
 
 const CACHE_KEY = "nft-insights-cache";
 
-export function useInsights(collectionName: string) {
+export function useInsights(collectionName: string, enabled = true) {
   const [insight, setInsight] = useState<CachedInsight | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -38,7 +38,7 @@ export function useInsights(collectionName: string) {
   };
 
   useEffect(() => {
-    if (!collectionName) return;
+    if (!enabled || !collectionName) return;
 
     const findCachedInsight = (collection: string): CachedInsight | null => {
       const cache = getCacheFromStorage();
@@ -98,7 +98,7 @@ export function useInsights(collectionName: string) {
     };
 
     fetchInsight();
-  }, [collectionName]);
+  }, [collectionName, enabled]);
 
   return {
     insight,

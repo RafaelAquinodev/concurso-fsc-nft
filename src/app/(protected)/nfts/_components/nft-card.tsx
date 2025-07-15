@@ -11,6 +11,8 @@ import { StarIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import LoadingSpin from "../../_components/loading-spin";
+import ImageErrorFallback from "../../_components/image-error-fallback";
 
 type NftCardProps = {
   nft: NFT;
@@ -65,15 +67,15 @@ const NftCard: React.FC<NftCardProps> = ({
     <div className="overflow-hidden rounded-xl bg-neutral-900 shadow-[0_5px_0_0_#6934ab] transition-all duration-300 hover:scale-102 hover:shadow-[0_0px_5px_0_#6934ab] max-[550px]:mx-auto max-[550px]:max-w-[280px]">
       {/* Imagem do NFT */}
       <div className="bg-brand-indigo relative h-64">
-        {nft.resolvedImageUrl && !imageError ? (
+        {nft.normalized_metadata?.image && !imageError ? (
           <>
             {imageLoading && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="border-brand-purple h-8 w-8 animate-spin rounded-full border-b-2"></div>
+                <LoadingSpin size="md" />
               </div>
             )}
             <Image
-              src={nft.resolvedImageUrl}
+              src={nft.normalized_metadata?.image}
               alt={nft.metadata?.name || `NFT ${nft.token_id}`}
               loading="lazy"
               width={300}
@@ -90,24 +92,7 @@ const NftCard: React.FC<NftCardProps> = ({
           </>
         ) : (
           // Se a imagem não carregar, mostra svg
-          <div className="flex h-full w-full min-w-[240px] items-center justify-center">
-            <div className="text-center">
-              <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-lg bg-gray-400">
-                <svg
-                  className="h-8 w-8"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <p className="text-sm">Sem imagem</p>
-            </div>
-          </div>
+          <ImageErrorFallback />
         )}
       </div>
 

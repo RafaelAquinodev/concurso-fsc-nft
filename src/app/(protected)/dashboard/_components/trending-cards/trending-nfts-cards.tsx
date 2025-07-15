@@ -4,21 +4,21 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { TrendingUp } from "lucide-react";
 import TrendingNftCard from "./trending-nfts-card";
 import CollectionModal from "./collection-modal";
-import { TrendingCollection } from "@/hooks/use-trending-nfts";
 import { useSidebar } from "@/components/ui/sidebar";
-
-type TrendingNFTsCardsProps = {
-  collections?: TrendingCollection[];
-  loading?: boolean;
-};
+import { useTrendingNFTs } from "@/hooks/use-trending-nfts";
+import { TrendingCollection } from "@/types/trending-collections-types";
 
 const SLIDE_WIDTH = 210;
 const MAX_CARDS_LIMIT = 14;
 
-const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
-  collections,
-  loading = false,
-}) => {
+const TrendingNFTsCards: React.FC = () => {
+  const {
+    data: trendingCollections,
+    isLoading,
+    isError,
+    error,
+  } = useTrendingNFTs();
+
   const containerRef = useRef<HTMLDivElement>(null);
   const [maxCards, setMaxCards] = useState(MAX_CARDS_LIMIT);
   const [selectedCollection, setSelectedCollection] =
@@ -96,16 +96,20 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
     return () => window.removeEventListener("resize", handleWindowResize);
   }, [handleResize]);
 
-  if (loading) {
+  const header = (
+    <div className="mb-4 flex items-center gap-4">
+      <h2 className="flex items-center gap-2 text-lg font-bold text-white">
+        <TrendingUp className="text-brand-purple h-5 w-5" />
+        NFTs em Alta
+      </h2>
+      <span className="mt-1 text-sm text-gray-400">Últimas 24 horas</span>
+    </div>
+  );
+
+  if (isLoading) {
     return (
       <div ref={containerRef} className="mx-auto w-full">
-        <div className="mb-6 flex items-center gap-4">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-white">
-            <TrendingUp className="text-brand-purple h-5 w-5" />
-            NFTs em Alta
-          </h2>
-          <span className="mt-1 text-sm text-gray-400">Últimas 24 horas</span>
-        </div>
+        {header}
         <div className="flex items-center justify-center gap-4 overflow-x-auto">
           <div className="mx-auto flex flex-col justify-center gap-4">
             <div className="mx-auto flex gap-4">
@@ -130,16 +134,21 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
     );
   }
 
-  if (!collections || collections.length === 0) {
+  if (isError) {
     return (
       <div ref={containerRef} className="mx-auto w-full">
-        <div className="mb-6 flex items-center gap-4">
-          <h2 className="flex items-center gap-2 text-lg font-bold text-white">
-            <TrendingUp className="text-brand-purple h-5 w-5" />
-            NFTs em Alta
-          </h2>
-          <span className="mt-1 text-sm text-gray-400">Últimas 24 horas</span>
+        {header}
+        <div className="bg-brand-indigo rounded-lg py-8 text-center">
+          <p className="text-gray-400">{error.message}</p>
         </div>
+      </div>
+    );
+  }
+
+  if (!trendingCollections || trendingCollections.length === 0) {
+    return (
+      <div ref={containerRef} className="mx-auto w-full">
+        {header}
         <div className="bg-brand-indigo rounded-lg py-8 text-center">
           <p className="text-gray-400">Nenhuma coleção encontrada</p>
         </div>
@@ -149,17 +158,11 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
 
   return (
     <div ref={containerRef} className="mx-auto w-full">
-      <div className="mb-6 flex items-center gap-4">
-        <h2 className="flex items-center gap-2 text-lg font-bold text-white">
-          <TrendingUp className="text-brand-purple h-5 w-5" />
-          NFTs em Alta
-        </h2>
-        <span className="mt-1 text-sm text-gray-400">Últimas 24 horas</span>
-      </div>
+      {header}
       {!isMobile ? (
         <div className="mx-auto flex flex-col justify-center gap-4">
           <div className="mx-auto flex gap-4">
-            {collections.slice(0, maxCards).map((collection, index) => (
+            {trendingCollections.slice(0, maxCards).map((collection, index) => (
               <TrendingNftCard
                 key={`${collection.collection_address}-${index}`}
                 collection={collection}
@@ -167,8 +170,8 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
               />
             ))}
           </div>
-          <div className="mx-auto hidden gap-4 max-[1921px]:flex">
-            {collections
+          <div className="mx-auto flex gap-4">
+            {trendingCollections
               .slice(maxCards, maxCards * 2)
               .map((collection, index) => (
                 <TrendingNftCard
@@ -182,7 +185,7 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
       ) : (
         <div className="max-[500px]:space-y-4 min-[500px]:columns-2">
           <div className="flex flex-col items-center justify-center gap-4">
-            {collections.slice(0, 3).map((collection, index) => (
+            {trendingCollections.slice(0, 3).map((collection, index) => (
               <TrendingNftCard
                 key={`${collection.collection_address}-${index}`}
                 collection={collection}
@@ -192,7 +195,7 @@ const TrendingNFTsCards: React.FC<TrendingNFTsCardsProps> = ({
             ))}
           </div>
           <div className="flex flex-col items-center justify-center gap-4">
-            {collections.slice(3, 6).map((collection, index) => (
+            {trendingCollections.slice(3, 6).map((collection, index) => (
               <TrendingNftCard
                 key={`${collection.collection_address}-${index}`}
                 collection={collection}

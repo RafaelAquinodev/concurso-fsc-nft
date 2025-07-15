@@ -47,13 +47,15 @@ interface UseWalletTransfersProps {
 
 interface UseWalletTransfersReturn {
   transfers: Transfer[];
-  loading: boolean;
+  isLoading: boolean;
+  isError: boolean;
   error: string | null;
-  totalCount: number;
   hasNextPage: boolean;
   cursor: string | null;
   refetch: () => void;
   loadMore: () => void;
+  fetchNextPage: () => void;
+  isFetchingNextPage: boolean;
 }
 
 export type {

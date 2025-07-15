@@ -1,36 +1,19 @@
-import { useState, useEffect, useMemo } from "react";
+import { useMemo } from "react";
 import { useWalletNFTs } from "./use-wallet-nfts";
 import { useWalletStats } from "./use-wallet-stats";
+import { UseWalletValueReturn, WalletValue } from "@/types/wallet-value-types";
 
 interface UseWalletValueProps {
   address: string;
   chain?: string;
-}
-
-interface WalletValue {
-  estimatedValueUSD: string;
-  estimatedValueETH: string;
-  averageFloorPriceUSD: string;
-  averageFloorPriceETH: string;
-  nftsWithPrices: number;
-  totalNfts: number;
-  nftsSize: number;
-}
-
-interface UseWalletValueReturn {
-  value: WalletValue | null;
-  loading: boolean;
-  error: string | null;
+  enabled?: boolean;
 }
 
 export const useWalletValue = ({
   address,
   chain = "eth",
+  enabled = true,
 }: UseWalletValueProps): UseWalletValueReturn => {
-  const [value, setValue] = useState<WalletValue | null>(null);
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
   const {
     nfts,
     loading: nftsLoading,
@@ -40,18 +23,20 @@ export const useWalletValue = ({
     chain,
     limit: 40,
     includePrices: true,
+    enabled: !!address && enabled,
   });
 
   const {
     stats,
-    loading: statsLoading,
+    isLoading: statsLoading,
     error: statsError,
   } = useWalletStats({
     address,
     chain,
+    enabled: !!address && enabled,
   });
 
-  const calculatedValue = useMemo(() => {
+  const calculatedValue = useMemo((): WalletValue | null => {
     if (!nfts || nfts.length === 0 || !stats) {
       return null;
     }
@@ -105,20 +90,11 @@ export const useWalletValue = ({
     };
   }, [nfts, stats]);
 
-  useEffect(() => {
-    const isLoading = nftsLoading || statsLoading;
-    const hasError = nftsError || statsError;
-
-    setLoading(isLoading);
-    setError(hasError);
-
-    if (!isLoading && !hasError) {
-      setValue(calculatedValue);
-    }
-  }, [nftsLoading, statsLoading, nftsError, statsError, calculatedValue]);
+  const loading = nftsLoading || statsLoading;
+  const error = nftsError || statsError;
 
   return {
-    value,
+    value: calculatedValue,
     loading,
     error,
   };

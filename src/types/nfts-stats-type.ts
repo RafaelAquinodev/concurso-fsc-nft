@@ -19,7 +19,8 @@ interface UseWalletStatsProps {
 
 interface UseWalletStatsReturn {
   stats: WalletStats | null;
-  loading: boolean;
+  isLoading: boolean;
+  isError: boolean;
   error: string | null;
 }
 
