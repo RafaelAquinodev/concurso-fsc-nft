@@ -72,7 +72,7 @@ const FavoriteNftCards = () => {
           </div>
 
           {/* Grid de NFTs */}
-          <div className="mb-8 grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6">
+          <div className="mb-8 grid grid-cols-[repeat(auto-fill,minmax(240px,1fr))] gap-6 max-[550px]:justify-center">
             {nfts.map((nft) => (
               <FavoriteNftCard
                 key={`${nft.token_address}-${nft.token_id}`}

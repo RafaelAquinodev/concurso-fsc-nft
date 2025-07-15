@@ -40,7 +40,7 @@ const FavoriteNftCard: React.FC<FavoriteNftCardProps> = ({
   const rarityLabel = nft.rarity_label || "N/A";
 
   return (
-    <div className="overflow-hidden rounded-xl bg-neutral-900 shadow-[0_5px_0_0_#6934ab] transition-all duration-300 hover:scale-102 hover:shadow-[0_0px_5px_0_#6934ab]">
+    <div className="overflow-hidden rounded-xl bg-neutral-900 shadow-[0_5px_0_0_#6934ab] transition-all duration-300 hover:scale-102 hover:shadow-[0_0px_5px_0_#6934ab] max-[550px]:mx-auto max-[550px]:max-w-[280px]">
       {/* Imagem do NFT */}
       <div className="bg-brand-indigo relative h-64">
         {nft.normalized_metadata?.image && !imageError ? (
