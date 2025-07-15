@@ -170,7 +170,7 @@ const TrendingNFTsCards: React.FC = () => {
               />
             ))}
           </div>
-          <div className="mx-auto hidden gap-4 max-[1921px]:flex">
+          <div className="mx-auto flex gap-4">
             {trendingCollections
               .slice(maxCards, maxCards * 2)
               .map((collection, index) => (

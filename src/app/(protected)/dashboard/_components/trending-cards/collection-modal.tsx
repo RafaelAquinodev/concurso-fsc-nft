@@ -14,6 +14,9 @@ import Image from "next/image";
 import InsightsCard from "./insights-card";
 import { resolveIpfsUrl } from "@/utils/resolve-ipfs-url";
 import { TrendingCollection } from "@/types/trending-collections-types";
+import { useState } from "react";
+import LoadingSpin from "@/app/(protected)/_components/loading-spin";
+import ImageErrorFallback from "@/app/(protected)/_components/image-error-fallback";
 
 interface CollectionModalProps {
   collection: TrendingCollection | null;
@@ -26,6 +29,9 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
   isOpen,
   onClose,
 }) => {
+  const [imageError, setImageError] = useState(false);
+  const [imageLoading, setImageLoading] = useState(true);
+
   const collectionAddress = collection?.collection_address;
 
   const {
@@ -59,7 +65,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
                   src={resolveIpfsUrl(nfts[0].collection_banner_image)}
                   alt={collection.collection_title}
                   width={700}
-                  height={200}
+                  height={400}
                   className="mt-6 max-h-52 rounded-lg border object-cover sm:mt-3"
                   onError={(e) => {
                     e.currentTarget.style.display = "none";
@@ -140,35 +146,34 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
                   className="bg-brand-indigo rounded-xl p-0"
                 >
                   <CardContent className="p-2">
-                    <div className="overflow-hidden rounded-lg bg-gray-700">
-                      {nft.normalized_metadata?.image ? (
-                        <Image
-                          src={nft.normalized_metadata?.image}
-                          alt={
-                            nft.normalized_metadata?.name ||
-                            `NFT #${nft.token_id}`
-                          }
-                          width={128}
-                          height={128}
-                          className="h-full w-full object-cover"
-                          onError={(e) => {
-                            e.currentTarget.style.display = "none";
-                          }}
-                        />
+                    <div className="relative overflow-hidden rounded-lg bg-gray-700">
+                      {nft.normalized_metadata?.image && !imageError ? (
+                        <>
+                          {imageLoading && (
+                            <div className="absolute inset-0 flex items-center justify-center">
+                              <LoadingSpin size="md" />
+                            </div>
+                          )}
+                          <Image
+                            src={nft.normalized_metadata?.image}
+                            alt={
+                              nft.normalized_metadata?.name ||
+                              `NFT #${nft.token_id}`
+                            }
+                            width={240}
+                            height={240}
+                            className={`h-full w-full object-cover transition-opacity duration-300 ${
+                              imageLoading ? "opacity-0" : "opacity-100"
+                            }`}
+                            onLoad={() => setImageLoading(false)}
+                            onError={() => {
+                              setImageError(true);
+                              setImageLoading(false);
+                            }}
+                          />
+                        </>
                       ) : (
-                        <div className="flex h-full min-h-32 w-full items-center justify-center bg-gray-700">
-                          <svg
-                            className="h-12 w-12 text-gray-500"
-                            fill="currentColor"
-                            viewBox="0 0 20 20"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </div>
+                        <ImageErrorFallback />
                       )}
                     </div>
                     <div className="flex flex-col p-1">
