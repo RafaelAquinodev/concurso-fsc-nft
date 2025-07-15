@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 import { cva } from "class-variance-authority";
 
 interface LoadingSpinProps {
-  size?: "default" | "sm";
+  size?: "default" | "sm" | "md";
   className?: string;
 }
 
@@ -14,6 +14,7 @@ const LoadingSpin = ({ size, className }: LoadingSpinProps) => {
         size: {
           default: "h-12 w-12",
           sm: "h-6 w-6",
+          md: "h-8 w-8",
         },
       },
       defaultVariants: {
