@@ -11,6 +11,8 @@ import { StarIcon } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
+import LoadingSpin from "../../_components/loading-spin";
+import ImageErrorFallback from "../../_components/image-error-fallback";
 
 type NftCardProps = {
   nft: NFT;
@@ -69,7 +71,7 @@ const NftCard: React.FC<NftCardProps> = ({
           <>
             {imageLoading && (
               <div className="absolute inset-0 flex items-center justify-center">
-                <div className="border-brand-purple h-8 w-8 animate-spin rounded-full border-b-2"></div>
+                <LoadingSpin size="md" />
               </div>
             )}
             <Image
@@ -90,24 +92,7 @@ const NftCard: React.FC<NftCardProps> = ({
           </>
         ) : (
           // Se a imagem não carregar, mostra svg
-          <div className="flex h-full w-full min-w-[240px] items-center justify-center">
-            <div className="text-center">
-              <div className="mx-auto mb-2 flex h-16 w-16 items-center justify-center rounded-lg bg-gray-400">
-                <svg
-                  className="h-8 w-8"
-                  fill="currentColor"
-                  viewBox="0 0 20 20"
-                >
-                  <path
-                    fillRule="evenodd"
-                    d="M4 3a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V5a2 2 0 00-2-2H4zm12 12H4l4-8 3 6 2-4 3 6z"
-                    clipRule="evenodd"
-                  />
-                </svg>
-              </div>
-              <p className="text-sm">Sem imagem</p>
-            </div>
-          </div>
+          <ImageErrorFallback />
         )}
       </div>
 
