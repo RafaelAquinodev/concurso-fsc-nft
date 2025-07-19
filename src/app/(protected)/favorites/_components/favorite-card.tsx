@@ -56,6 +56,7 @@ const FavoriteNftCard: React.FC<FavoriteNftCardProps> = ({
               loading="lazy"
               width={300}
               height={300}
+              unoptimized
               className={`h-full w-full rounded-xl object-cover transition-opacity duration-300 ${
                 imageLoading ? "opacity-0" : "opacity-100"
               }`}

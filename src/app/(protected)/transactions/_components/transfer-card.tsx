@@ -29,6 +29,8 @@ export default function TransferCard({
               alt={transfer.metadata.name || "NFT"}
               width={50}
               height={50}
+              loading="lazy"
+              unoptimized
               className="h-full w-full rounded-sm object-cover object-center"
             />
           </div>
