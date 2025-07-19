@@ -23,8 +23,10 @@ export default function RecentTransferCard({
             <Image
               src={transfer.metadata.image}
               alt={transfer.metadata.name || "NFT"}
+              loading="lazy"
               width={50}
               height={50}
+              unoptimized
               className="rounded-sm"
             />
           </div>

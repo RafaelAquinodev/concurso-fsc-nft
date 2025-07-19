@@ -66,6 +66,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
                   alt={collection.collection_title}
                   width={700}
                   height={400}
+                  unoptimized
                   className="mt-6 max-h-52 rounded-lg border object-cover sm:mt-3"
                   onError={(e) => {
                     e.currentTarget.style.display = "none";
@@ -80,6 +81,7 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
                 alt={collection.collection_title}
                 width={50}
                 height={50}
+                unoptimized
                 className="rounded-lg object-cover"
                 onError={(e) => {
                   e.currentTarget.style.display = "none";
@@ -160,8 +162,10 @@ const CollectionModal: React.FC<CollectionModalProps> = ({
                               nft.normalized_metadata?.name ||
                               `NFT #${nft.token_id}`
                             }
+                            loading="lazy"
                             width={240}
                             height={240}
+                            unoptimized
                             className={`h-full w-full object-cover transition-opacity duration-300 ${
                               imageLoading ? "opacity-0" : "opacity-100"
                             }`}
